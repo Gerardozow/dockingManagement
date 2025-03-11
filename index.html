@@ -1,0 +1,75 @@
+<!-- dashboard.html -->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Gestión de Muelles</title>
+    <style>
+        .muelle {
+            display: inline-block;
+            width: 200px;
+            padding: 20px;
+            margin: 10px;
+            text-align: center;
+            border-radius: 5px;
+            color: white;
+        }
+
+        .disponible {
+            background-color: #28a745;
+        }
+
+        .ocupado {
+            background-color: #dc3545;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="contenedor-muelles"></div>
+
+    <script>
+        function cargarMuelles() {
+            fetch('obtener_muelles.php')
+                .then(response => response.json())
+                .then(data => {
+                    let html = '';
+                    data.forEach(muelle => {
+                        html += `
+                            <div class="muelle ${muelle.estado}" 
+                                 onclick="cambiarEstado(${muelle.id}, '${muelle.estado}')">
+                                <h3>${muelle.nombre}</h3>
+                                <p>Estado: ${muelle.estado}</p>
+                                ${muelle.estado === 'ocupado' ?
+                                `<p>Cliente: ${muelle.cliente_asignado}</p>` : ''}
+                            </div>
+                        `;
+                    });
+                    document.getElementById('contenedor-muelles').innerHTML = html;
+                });
+        }
+
+        function cambiarEstado(id, estadoActual) {
+            const nuevoEstado = estadoActual === 'disponible' ? 'ocupado' : 'disponible';
+            const cliente = nuevoEstado === 'ocupado' ? prompt('Nombre del cliente:') : null;
+
+            fetch('actualizar_muelle.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id: id,
+                    estado: nuevoEstado,
+                    cliente: cliente
+                })
+            }).then(() => cargarMuelles());
+        }
+
+        // Actualizar cada 30 segundos
+        setInterval(cargarMuelles, 30000);
+        window.onload = cargarMuelles;
+    </script>
+</body>
+
+</html>
