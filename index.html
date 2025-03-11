@@ -68,7 +68,33 @@
         }
 
         // Actualizar cada 30 segundos
-        setInterval(cargarMuelles, 30000);
+        // Reemplazar el setInterval y cargarMuelles() por:
+        const eventSource = new EventSource('sse.php');
+
+        eventSource.onmessage = (e) => {
+            const data = JSON.parse(e.data);
+            actualizarInterfaz(data);
+        };
+
+        function actualizarInterfaz(data) {
+            const contenedor = document.getElementById('contenedor-muelles');
+            contenedor.innerHTML = '';
+
+            data.forEach(muelle => {
+                const div = document.createElement('div');
+                div.className = `muelle ${muelle.estado}`;
+                div.innerHTML = `
+            <h3>${muelle.nombre}</h3>
+            <p>Estado: ${muelle.estado}</p>
+            ${muelle.estado === 'ocupado' ?
+                        `<p>Cliente: ${muelle.cliente_asignado}</p>` : ''}
+        `;
+                div.onclick = () => cambiarEstado(muelle.id, muelle.estado);
+                contenedor.appendChild(div);
+            });
+        }
+
+
         window.onload = cargarMuelles;
     </script>
 </body>
