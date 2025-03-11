@@ -100,10 +100,24 @@ class MuelleManager {
   }
 
   startPolling() {
-    setInterval(() => this.checkUpdates(), 5000);
+    this.pollingInterval = setInterval(async () => {
+      try {
+        const response = await fetch("php/ultima_actualizacion.php");
+        const { timestamp } = await response.json();
+
+        if (timestamp !== this.lastUpdate) {
+          console.log("Cambios detectados, actualizando...");
+          await this.loadInitialData();
+          this.lastUpdate = timestamp;
+        }
+      } catch (error) {
+        console.error("Error en polling:", error);
+      }
+    }, 3000); // Intervalo reducido a 3 segundos
   }
 
   updateInterface(data) {
+    console.log("Datos recibidos:", data);
     const container = document.getElementById("contenedor-muelles");
     container.innerHTML = data
       .map((muelle) => this.createMuelleElement(muelle))

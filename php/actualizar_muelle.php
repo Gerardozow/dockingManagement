@@ -5,12 +5,12 @@ $data = json_decode(file_get_contents('php://input'), true);
 
 try {
     $sql = "UPDATE muelles SET 
-            estado = :estado,
-            cliente_asignado = IF(:estado = 'ocupado', :cliente, NULL),
-            detalles = IF(:estado = 'ocupado', :detalles, NULL),
-            hora_entrada = IF(:estado = 'ocupado', NOW(), NULL),
-            ultima_actualizacion = NOW()
-            WHERE id = :id";
+    estado = :estado,
+    cliente_asignado = :cliente,
+    detalles = :detalles,
+    hora_entrada = IF(:estado = 'ocupado', NOW(), NULL),
+    ultima_actualizacion = NOW() -- Fuerza actualización del timestamp
+    WHERE id = :id";
             
     $stmt = $conn->prepare($sql);
     $stmt->execute([
