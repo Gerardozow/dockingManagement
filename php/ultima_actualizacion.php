@@ -1,17 +1,20 @@
 <?php
-require 'conexion.php';
+require 'config.php';
 
 try {
-    $stmt = $conn->query("SELECT MAX(ultima_actualizacion) as ts FROM muelles");
-    $timestamp = strtotime($stmt->fetchColumn());
+    $conn = Database::getConnection();
+    $stmt = $conn->query("SELECT UNIX_TIMESTAMP(MAX(ultima_actualizacion)) as ts FROM muelles");
+    $timestamp = $stmt->fetchColumn();
     
     echo json_encode([
         'success' => true,
         'timestamp' => $timestamp ?: time()
     ]);
+    
 } catch(PDOException $e) {
     echo json_encode([
         'success' => false,
-        'error' => 'Error: ' . $e->getMessage()
+        'error' => $e->getMessage()
     ]);
 }
+?>

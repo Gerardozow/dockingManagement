@@ -5,50 +5,49 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Muelles</title>
-    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
 
 <body>
     <header>
-        <h1>🏗️ Gestión de Muelles de Carga</h1>
-        <div class="leyenda">
-            <div class="leyenda-item"><span class="color disponible"></span> Disponible</div>
-            <div class="leyenda-item"><span class="color ocupado"></span> Ocupado</div>
+        <h1>🚢 Gestión de Muelles</h1>
+        <div class="status-legend">
+            <div class="legend-item available"></div>
+            <div class="legend-item occupied"></div>
         </div>
     </header>
 
     <main>
-        <div id="contenedor-muelles" class="muelles-grid"></div>
-        <div id="loading" class="loading">Cargando...</div>
+        <div class="docks-container" id="docksContainer"></div>
     </main>
 
-    <!-- Modal -->
-    <div id="modal" class="modal">
-        <div class="modal-contenido">
-            <span class="cerrar">&times;</span>
-            <h2>Gestión de Muelle <span id="muelle-id"></span></h2>
-            <form id="form-muelle">
+    <!-- Modal de Edición -->
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>Editar Muelle <span id="dockNumber"></span></h2>
+            <form id="dockForm">
                 <div class="form-group">
                     <label>Estado:</label>
-                    <select id="estado" name="estado" class="form-control" required>
+                    <select id="status" class="form-control" required>
                         <option value="disponible">Disponible</option>
                         <option value="ocupado">Ocupado</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Cliente:</label>
-                    <input type="text" id="cliente" name="cliente" class="form-control" required>
+                    <input type="text" id="client" class="form-control" required>
                 </div>
                 <div class="form-group">
                     <label>Detalles:</label>
-                    <textarea id="detalles" name="detalles" class="form-control" rows="3"></textarea>
+                    <textarea id="details" class="form-control" rows="3"></textarea>
                 </div>
-                <button type="submit" class="btn-guardar">Guardar Cambios</button>
+                <button type="submit" class="btn-save">Guardar Cambios</button>
             </form>
         </div>
     </div>
 
-    <script src="js/main.js"></script>
+    <script src="assets/js/app.js"></script>
 </body>
 
 </html>

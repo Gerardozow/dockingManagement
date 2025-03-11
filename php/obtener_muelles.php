@@ -1,30 +1,20 @@
 <?php
-// php/obtener_muelles.php
-require 'conexion.php';
+require 'config.php';
 
 try {
-    $stmt = $conn->query("SELECT 
-        id,
-        nombre,
-        estado,
-        cliente_asignado,
-        detalles,
-        DATE_FORMAT(hora_entrada, '%Y-%m-%d %H:%i:%s') as hora_entrada,
-        UNIX_TIMESTAMP(ultima_actualizacion) as ultima_actualizacion
-        FROM muelles");
-    
-    $muelles = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $conn = Database::getConnection();
+    $stmt = $conn->query("SELECT * FROM muelles");
+    $data = $stmt->fetchAll();
     
     echo json_encode([
         'success' => true,
-        'data' => $muelles,
-        'timestamp' => time()
+        'data' => $data
     ]);
     
 } catch(PDOException $e) {
     echo json_encode([
         'success' => false,
-        'error' => 'Error en la consulta: ' . $e->getMessage()
+        'error' => $e->getMessage()
     ]);
 }
 ?>
