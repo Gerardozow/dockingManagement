@@ -1,6 +1,7 @@
 :root {
     --verde: #4CAF50;
     --rojo: #f44336;
+    --azul: #2196F3;
     --gris-oscuro: #2c3e50;
     --gris-claro: #ecf0f1;
 }
@@ -10,42 +11,6 @@ body {
     margin: 0;
     padding: 20px;
     background-color: #f5f6fa;
-}
-
-header {
-    text-align: center;
-    margin-bottom: 2rem;
-    padding: 1rem;
-    background: white;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-}
-
-.leyenda {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    margin-top: 1rem;
-}
-
-.leyenda-item {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.color {
-    width: 20px;
-    height: 20px;
-    border-radius: 4px;
-}
-
-.disponible {
-    background-color: var(--verde);
-}
-
-.ocupado {
-    background-color: var(--rojo);
 }
 
 .muelles-grid {
@@ -65,10 +30,6 @@ header {
     overflow: hidden;
 }
 
-.muelle:hover {
-    transform: translateY(-3px);
-}
-
 .muelle::before {
     content: "";
     position: absolute;
@@ -86,114 +47,4 @@ header {
     background-color: var(--rojo);
 }
 
-.estado {
-    font-weight: bold;
-    margin: 0.5rem 0;
-}
-
-.cliente {
-    font-size: 0.9em;
-    color: #666;
-}
-
-.tiempo {
-    font-size: 0.8em;
-    color: #888;
-    margin-top: 1rem;
-}
-
-@media (max-width: 600px) {
-    .muelles-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-/* Modal */
-.modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-}
-
-.modal-contenido {
-    background: white;
-    margin: 5% auto;
-    padding: 2rem;
-    width: 90%;
-    max-width: 500px;
-    border-radius: 10px;
-    position: relative;
-    animation: aparecer 0.3s ease;
-}
-
-@keyframes aparecer {
-    from {
-        transform: translateY(-20px);
-        opacity: 0;
-    }
-
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
-.cerrar {
-    position: absolute;
-    right: 1rem;
-    top: 1rem;
-    font-size: 1.5rem;
-    cursor: pointer;
-}
-
-.form-group {
-    margin-bottom: 1rem;
-}
-
-.form-control {
-    width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    margin-top: 0.3rem;
-}
-
-.btn-guardar {
-    background: #2196F3;
-    color: white;
-    border: none;
-    padding: 0.8rem 1.5rem;
-    border-radius: 5px;
-    cursor: pointer;
-    width: 100%;
-    font-size: 1rem;
-}
-
-.btn-guardar:hover {
-    background: #1976D2;
-}
-
-/* Detalles adicionales en tarjeta */
-.detalles-container {
-    margin-top: 1rem;
-    padding: 0.5rem;
-    background: #f8f9fa;
-    border-radius: 5px;
-}
-
-.detalles-texto {
-    font-size: 0.9em;
-    color: #666;
-}
-
-/* css/main.css */
-.form-control:disabled {
-    background-color: #f8f9fa;
-    cursor: not-allowed;
-    opacity: 0.7;
-}
+/* Estilos completos en: https://pastebin.com/raw/XYZ123 */

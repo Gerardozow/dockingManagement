@@ -1,75 +1,38 @@
-// js/main.js
 class MuelleManager {
   constructor() {
     this.modal = document.getElementById("modal");
     this.form = document.getElementById("form-muelle");
+    this.loading = document.getElementById("loading");
+    this.lastUpdate = null;
     this.currentMuelle = null;
 
-    // Inicializar eventos
+    this.init();
+  }
+
+  async init() {
     this.setupEventListeners();
-    this.initEventSource();
-    this.loadInitialData();
-  }
-  openEditModal(muelle) {
-    this.currentMuelle = muelle;
-    this.populateForm(muelle);
-    this.toggleModal(true);
-    this.handleEstadoChange(); // Llamar al detectar cambio inicial
-  }
-
-  // Agregar nuevo método para manejar cambios en el select
-  handleEstadoChange() {
-    const estadoSelect = document.getElementById("estado");
-    const clienteField = document.getElementById("cliente");
-    const detallesField = document.getElementById("detalles");
-
-    const handleChange = () => {
-      if (estadoSelect.value === "disponible") {
-        clienteField.value = "";
-        detallesField.value = "";
-        clienteField.disabled = true;
-        detallesField.disabled = true;
-      } else {
-        clienteField.disabled = false;
-        detallesField.disabled = false;
-      }
-    };
-
-    estadoSelect.addEventListener("change", handleChange);
-    handleChange(); // Ejecutar inicialmente
-  }
-
-  // Modificar populateForm para mantener datos actuales
-  populateForm(muelle) {
-    document.getElementById("muelle-id").textContent = muelle.nombre;
-    document.getElementById("estado").value = muelle.estado;
-
-    // Solo cargar datos si está ocupado
-    if (muelle.estado === "ocupado") {
-      document.getElementById("cliente").value = muelle.cliente_asignado || "";
-      document.getElementById("detalles").value = muelle.detalles || "";
-    }
+    await this.loadInitialData();
+    this.startPolling();
   }
 
   setupEventListeners() {
-    // Cerrar modal con la X
     document
       .querySelector(".cerrar")
       .addEventListener("click", () => this.toggleModal(false));
-
-    // Cerrar modal al hacer clic fuera
-    window.addEventListener("click", (e) => {
-      if (e.target === this.modal) this.toggleModal(false);
-    });
-
-    // Enviar formulario
-    this.form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      await this.handleFormSubmit();
-    });
+    window.addEventListener(
+      "click",
+      (e) => e.target === this.modal && this.toggleModal(false)
+    );
+    this.form.addEventListener("submit", (e) => this.handleFormSubmit(e));
+    document
+      .getElementById("estado")
+      .addEventListener("change", () => this.handleEstadoChange());
   }
 
-  async handleFormSubmit() {
+  async handleFormSubmit(e) {
+    e.preventDefault();
+    this.toggleLoading(true);
+
     const formData = {
       id: this.currentMuelle.id,
       estado: document.getElementById("estado").value,
@@ -80,106 +43,119 @@ class MuelleManager {
     try {
       const response = await fetch("php/actualizar_muelle.php", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
-      if (!response.ok) throw new Error("Error en la actualización");
+      if (!response.ok) throw new Error(await response.text());
       this.toggleModal(false);
     } catch (error) {
       console.error("Error:", error);
       alert("Error actualizando el muelle");
+    } finally {
+      this.toggleLoading(false);
     }
   }
 
-  initEventSource() {
-    this.eventSource = new EventSource("php/sse.php");
+  handleEstadoChange() {
+    const estado = document.getElementById("estado").value;
+    const cliente = document.getElementById("cliente");
+    const detalles = document.getElementById("detalles");
 
-    this.eventSource.onmessage = (e) => {
-      const data = JSON.parse(e.data);
-      this.updateInterface(data);
-    };
+    cliente.disabled = estado === "disponible";
+    detalles.disabled = estado === "disponible";
 
-    this.eventSource.onerror = (e) => {
-      console.error("Error en conexión SSE:", e);
-      setTimeout(() => this.initEventSource(), 5000);
-    };
+    if (estado === "disponible") {
+      cliente.value = "";
+      detalles.value = "";
+    }
   }
 
   async loadInitialData() {
+    this.toggleLoading(true);
     try {
       const response = await fetch("php/obtener_muelles.php");
       const data = await response.json();
-      this.updateInterface(data);
+      this.updateInterface(data.data);
     } catch (error) {
-      console.error("Error cargando datos iniciales:", error);
+      console.error("Error:", error);
+      alert("Error cargando datos");
+    } finally {
+      this.toggleLoading(false);
     }
+  }
+
+  async checkUpdates() {
+    try {
+      const response = await fetch("php/ultima_actualizacion.php");
+      const { timestamp } = await response.json();
+
+      if (timestamp !== this.lastUpdate) {
+        this.lastUpdate = timestamp;
+        await this.loadInitialData();
+      }
+    } catch (error) {
+      console.error("Error verificando actualizaciones:", error);
+    }
+  }
+
+  startPolling() {
+    setInterval(() => this.checkUpdates(), 5000);
   }
 
   updateInterface(data) {
     const container = document.getElementById("contenedor-muelles");
-    container.innerHTML = "";
-    data.forEach((muelle) =>
-      container.appendChild(this.createMuelleElement(muelle))
-    );
+    container.innerHTML = data
+      .map((muelle) => this.createMuelleElement(muelle))
+      .join("");
   }
 
   createMuelleElement(muelle) {
-    const div = document.createElement("div");
-    div.className = `muelle ${muelle.estado}`;
-
-    div.innerHTML = `
-            <h3>${muelle.nombre}</h3>
-            <div class="estado">${muelle.estado.toUpperCase()}</div>
-            ${
-              muelle.estado === "ocupado"
-                ? `
-                <div class="detalles-container">
-                    <div class="cliente">Cliente: ${
-                      muelle.cliente_asignado || "Sin especificar"
-                    }</div>
-                    ${
-                      muelle.detalles
-                        ? `
-                        <div class="detalles-texto">Detalles: ${muelle.detalles}</div>
-                    `
-                        : ""
-                    }
-                    <div class="tiempo">Inicio: ${new Date(
-                      muelle.hora_entrada
-                    ).toLocaleString()}</div>
-                </div>
-            `
-                : ""
-            }
-        `;
-
-    div.addEventListener("click", () => this.openEditModal(muelle));
-    return div;
+    return `
+          <div class="muelle ${muelle.estado}" data-id="${
+      muelle.id
+    }" onclick="muelleManager.openEditModal(${JSON.stringify(muelle)})">
+              <h3>${muelle.nombre}</h3>
+              <div class="estado">${muelle.estado.toUpperCase()}</div>
+              ${
+                muelle.estado === "ocupado"
+                  ? `
+                  <div class="detalles-container">
+                      <div class="cliente">${muelle.cliente_asignado}</div>
+                      ${
+                        muelle.detalles
+                          ? `<div class="detalles-texto">${muelle.detalles}</div>`
+                          : ""
+                      }
+                      <div class="tiempo">${new Date(
+                        muelle.hora_entrada
+                      ).toLocaleString()}</div>
+                  </div>
+              `
+                  : ""
+              }
+          </div>
+      `;
   }
 
   openEditModal(muelle) {
     this.currentMuelle = muelle;
-    this.populateForm(muelle);
-    this.toggleModal(true);
-  }
-
-  populateForm(muelle) {
     document.getElementById("muelle-id").textContent = muelle.nombre;
     document.getElementById("estado").value = muelle.estado;
     document.getElementById("cliente").value = muelle.cliente_asignado || "";
     document.getElementById("detalles").value = muelle.detalles || "";
+    this.handleEstadoChange();
+    this.toggleModal(true);
   }
 
   toggleModal(show = true) {
     this.modal.style.display = show ? "block" : "none";
-    if (show) document.getElementById("cliente").focus();
+  }
+
+  toggleLoading(show) {
+    this.loading.style.display = show ? "block" : "none";
   }
 }
 
-// Inicializar la aplicación al cargar la página
-document.addEventListener("DOMContentLoaded", () => {
-  new MuelleManager();
-});
+// Inicializar la aplicación
+const muelleManager = new MuelleManager();
