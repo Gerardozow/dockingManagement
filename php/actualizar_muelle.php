@@ -3,21 +3,14 @@ require_once 'conexion.php';
 
 $data = json_decode(file_get_contents('php://input'), true);
 
-if(!isset($data['id'], $data['estado'])) {
-    http_response_code(400);
-    echo json_encode(['success' => false, 'error' => 'Datos incompletos']);
-    exit;
-}
-
 try {
     $sql = "UPDATE muelles SET 
-        estado = :estado,
-        cliente_asignado = :cliente,
-        detalles = :detalles,
-        hora_entrada = IF(:estado = 'ocupado', NOW(), NULL),
-        ultima_actualizacion = NOW()
-        WHERE id = :id";
-
+            estado = :estado,
+            cliente_asignado = IF(:estado = 'ocupado', :cliente, NULL),
+            detalles = IF(:estado = 'ocupado', :detalles, NULL),
+            hora_entrada = IF(:estado = 'ocupado', NOW(), NULL),
+            ultima_actualizacion = NOW()
+            WHERE id = :id";
             
     $stmt = $conn->prepare($sql);
     $stmt->execute([

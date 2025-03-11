@@ -10,6 +10,46 @@ class MuelleManager {
     this.initEventSource();
     this.loadInitialData();
   }
+  openEditModal(muelle) {
+    this.currentMuelle = muelle;
+    this.populateForm(muelle);
+    this.toggleModal(true);
+    this.handleEstadoChange(); // Llamar al detectar cambio inicial
+  }
+
+  // Agregar nuevo método para manejar cambios en el select
+  handleEstadoChange() {
+    const estadoSelect = document.getElementById("estado");
+    const clienteField = document.getElementById("cliente");
+    const detallesField = document.getElementById("detalles");
+
+    const handleChange = () => {
+      if (estadoSelect.value === "disponible") {
+        clienteField.value = "";
+        detallesField.value = "";
+        clienteField.disabled = true;
+        detallesField.disabled = true;
+      } else {
+        clienteField.disabled = false;
+        detallesField.disabled = false;
+      }
+    };
+
+    estadoSelect.addEventListener("change", handleChange);
+    handleChange(); // Ejecutar inicialmente
+  }
+
+  // Modificar populateForm para mantener datos actuales
+  populateForm(muelle) {
+    document.getElementById("muelle-id").textContent = muelle.nombre;
+    document.getElementById("estado").value = muelle.estado;
+
+    // Solo cargar datos si está ocupado
+    if (muelle.estado === "ocupado") {
+      document.getElementById("cliente").value = muelle.cliente_asignado || "";
+      document.getElementById("detalles").value = muelle.detalles || "";
+    }
+  }
 
   setupEventListeners() {
     // Cerrar modal con la X
