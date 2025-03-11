@@ -1,6 +1,6 @@
 class DockManager {
   constructor() {
-    this.docks = [];
+    this.docks = []; // Inicializar como array vacío
     this.lastUpdate = null;
     this.init();
   }
@@ -11,35 +11,48 @@ class DockManager {
     this.startPolling();
   }
 
-  setupEventListeners() {
-    document
-      .querySelector(".close-btn")
-      .addEventListener("click", () => this.toggleModal());
-    document
-      .getElementById("dockForm")
-      .addEventListener("submit", (e) => this.handleSubmit(e));
-    document
-      .getElementById("status")
-      .addEventListener("change", () => this.toggleClientFields());
+  // Agregar método showError faltante
+  showError(message) {
+    const container = document.getElementById("docksContainer");
+    container.innerHTML = `<div class="error">${message}</div>`;
   }
 
   async loadData() {
     try {
       const response = await fetch("php/obtener_muelles.php");
       const data = await response.json();
+
+      // Validar estructura de respuesta
+      if (!data.success || !Array.isArray(data.data)) {
+        throw new Error("Respuesta inválida del servidor");
+      }
+
       this.docks = data.data;
       this.renderDocks();
     } catch (error) {
       console.error("Error:", error);
-      this.showError("Error cargando datos");
+      this.showError("Error cargando datos: " + error.message);
     }
   }
 
   renderDocks() {
     const container = document.getElementById("docksContainer");
+
+    // Verificar que docks sea array
+    if (!Array.isArray(this.docks)) {
+      console.error("Docks no es un array:", this.docks);
+      return;
+    }
+
     container.innerHTML = this.docks
-      .map(
-        (dock) => `
+      .map((dock) => this.createDockCard(dock))
+      .join("");
+
+    this.addCardListeners();
+  }
+
+  createDockCard(dock) {
+    return `
           <div class="dock-card ${dock.estado}" data-id="${dock.id}">
               <h3>Muelle ${dock.nombre}</h3>
               <div class="status">${dock.estado.toUpperCase()}</div>
@@ -47,47 +60,38 @@ class DockManager {
                 dock.estado === "ocupado"
                   ? `
                   <div class="details">
-                      <p><strong>Cliente:</strong> ${dock.cliente_asignado}</p>
+                      <p><strong>Cliente:</strong> ${
+                        dock.cliente_asignado || "N/A"
+                      }</p>
                       ${
                         dock.detalles
                           ? `<p><strong>Detalles:</strong> ${dock.detalles}</p>`
                           : ""
                       }
-                      <p class="timestamp">Ocupado desde: ${new Date(
+                      <p class="timestamp">Ocupado desde: ${
                         dock.hora_entrada
-                      ).toLocaleString()}</p>
+                          ? new Date(dock.hora_entrada).toLocaleString()
+                          : "N/A"
+                      }</p>
                   </div>
               `
                   : ""
               }
           </div>
-      `
-      )
-      .join("");
+      `;
+  }
 
+  addCardListeners() {
     document.querySelectorAll(".dock-card").forEach((card) => {
-      card.addEventListener("click", () =>
-        this.showEditModal(JSON.parse(card.dataset.id))
-      );
+      card.addEventListener("click", () => {
+        const dockId = card.dataset.id;
+        const selectedDock = this.docks.find((d) => d.id == dockId);
+        if (selectedDock) {
+          this.showEditModal(selectedDock);
+        }
+      });
     });
   }
 
-  async checkUpdates() {
-    try {
-      const response = await fetch("php/ultima_actualizacion.php");
-      const { timestamp } = await response.json();
-
-      if (timestamp !== this.lastUpdate) {
-        this.lastUpdate = timestamp;
-        await this.loadData();
-      }
-    } catch (error) {
-      console.error("Error en actualización:", error);
-    }
-  }
-
-  // Métodos restantes completos en: https://pastebin.com/raw/DEF456
+  // Resto del código...
 }
-
-// Inicializar la aplicación
-const dockManager = new DockManager();

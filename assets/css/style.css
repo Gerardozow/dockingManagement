@@ -49,3 +49,12 @@ body {
 }
 
 /* Estilos completos en: https://pastebin.com/raw/ABC123 */
+
+
+.error {
+    padding: 1rem;
+    background: #ffebee;
+    color: #b71c1c;
+    border-radius: 4px;
+    margin: 1rem 0;
+}
