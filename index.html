@@ -1,102 +1,27 @@
-<!-- dashboard.html -->
 <!DOCTYPE html>
-<html>
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
-    <title>Gestión de Muelles</title>
-    <style>
-        .muelle {
-            display: inline-block;
-            width: 200px;
-            padding: 20px;
-            margin: 10px;
-            text-align: center;
-            border-radius: 5px;
-            color: white;
-        }
-
-        .disponible {
-            background-color: #28a745;
-        }
-
-        .ocupado {
-            background-color: #dc3545;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestor de Muelles</title>
+    <link rel="stylesheet" href="css/main.css">
 </head>
 
 <body>
-    <div id="contenedor-muelles"></div>
+    <header>
+        <h1>🏗️ Gestión de Muelles de Carga</h1>
+        <div class="leyenda">
+            <div class="leyenda-item"><span class="color disponible"></span> Disponible</div>
+            <div class="leyenda-item"><span class="color ocupado"></span> Ocupado</div>
+        </div>
+    </header>
 
-    <script>
-        function cargarMuelles() {
-            fetch('obtener_muelles.php')
-                .then(response => response.json())
-                .then(data => {
-                    let html = '';
-                    data.forEach(muelle => {
-                        html += `
-                            <div class="muelle ${muelle.estado}" 
-                                 onclick="cambiarEstado(${muelle.id}, '${muelle.estado}')">
-                                <h3>${muelle.nombre}</h3>
-                                <p>Estado: ${muelle.estado}</p>
-                                ${muelle.estado === 'ocupado' ?
-                                `<p>Cliente: ${muelle.cliente_asignado}</p>` : ''}
-                            </div>
-                        `;
-                    });
-                    document.getElementById('contenedor-muelles').innerHTML = html;
-                });
-        }
+    <main>
+        <div id="contenedor-muelles" class="muelles-grid"></div>
+    </main>
 
-        function cambiarEstado(id, estadoActual) {
-            const nuevoEstado = estadoActual === 'disponible' ? 'ocupado' : 'disponible';
-            const cliente = nuevoEstado === 'ocupado' ? prompt('Nombre del cliente:') : null;
-
-            fetch('actualizar_muelle.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    id: id,
-                    estado: nuevoEstado,
-                    cliente: cliente
-                })
-            }).then(() => cargarMuelles());
-        }
-
-        // Actualizar cada 30 segundos
-        // Reemplazar el setInterval y cargarMuelles() por:
-        const eventSource = new EventSource('sse.php');
-
-        eventSource.onmessage = (e) => {
-            const data = JSON.parse(e.data);
-            actualizarInterfaz(data);
-        };
-
-        function actualizarInterfaz(data) {
-            const contenedor = document.getElementById('contenedor-muelles');
-            contenedor.innerHTML = '';
-
-            data.forEach(muelle => {
-                const div = document.createElement('div');
-                div.className = `muelle ${muelle.estado}`;
-                div.innerHTML = `
-            <h3>${muelle.nombre}</h3>
-            <p>Estado: ${muelle.estado}</p>
-            ${muelle.estado === 'ocupado' ?
-                        `<p>Cliente: ${muelle.cliente_asignado}</p>` : ''}
-        `;
-                div.onclick = () => cambiarEstado(muelle.id, muelle.estado);
-                contenedor.appendChild(div);
-            });
-        }
-
-
-        window.onload = cargarMuelles;
-    </script>
+    <script src="js/main.js"></script>
 </body>
 
 </html>
