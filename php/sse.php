@@ -19,26 +19,28 @@ try {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    $ultima_actualizacion = getUltimaActualizacion($conn);
-    
-    // Enviar datos iniciales
-    echo "data: " . json_encode(obtenerMuelles($conn)) . "\n\n";
-    ob_flush();
-    flush();
+    $ultima_actualizacion = $cache->get('ultima_actualizacion');
 
-    // Bucle principal
-    while(true) {
-        $nueva_actualizacion = getUltimaActualizacion($conn);
-        
-        if($nueva_actualizacion != $ultima_actualizacion) {
-            $ultima_actualizacion = $nueva_actualizacion;
-            echo "data: " . json_encode(obtenerMuelles($conn)) . "\n\n";
-            ob_flush();
-            flush();
-        }
-        
-        sleep(1);
+if (!$ultima_actualizacion) {
+    $stmt = $conn->query("SELECT MAX(ultima_actualizacion) FROM muelles");
+    $ultima_actualizacion = $stmt->fetchColumn();
+    $cache->set('ultima_actualizacion', $ultima_actualizacion, 2);
+}
+
+// Bucle principal optimizado
+while(true) {
+    $nueva_actualizacion = $cache->get('ultima_actualizacion');
+    
+    if($nueva_actualizacion != $ultima_actualizacion) {
+        $data = $cache->get('muelles_data');
+        echo "data: " . json_encode($data) . "\n\n";
+        ob_flush();
+        flush();
+        $ultima_actualizacion = $nueva_actualizacion;
     }
+    
+    sleep(3); // Aumentar intervalo
+}
 } catch(PDOException $e) {
     error_log("Error SSE: " . $e->getMessage());
     echo "event: error\ndata: " . json_encode(['error' => 'Database error']) . "\n\n";
