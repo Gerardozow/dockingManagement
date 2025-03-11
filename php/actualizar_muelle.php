@@ -11,17 +11,20 @@ if(!isset($data['id'], $data['estado'])) {
 
 try {
     $sql = "UPDATE muelles SET 
-            estado = :estado,
-            cliente_asignado = :cliente,
-            hora_entrada = IF(:estado = 'ocupado', NOW(), NULL),
-            ultima_actualizacion = NOW()
-            WHERE id = :id";
+        estado = :estado,
+        cliente_asignado = :cliente,
+        detalles = :detalles,
+        hora_entrada = IF(:estado = 'ocupado', NOW(), NULL),
+        ultima_actualizacion = NOW()
+        WHERE id = :id";
+
             
     $stmt = $conn->prepare($sql);
     $stmt->execute([
         ':id' => $data['id'],
         ':estado' => $data['estado'],
-        ':cliente' => $data['cliente'] ?? null
+        ':cliente' => $data['cliente'] ?? null,
+        ':detalles' => $data['detalles'] ?? null
     ]);
     
     echo json_encode(['success' => true]);
