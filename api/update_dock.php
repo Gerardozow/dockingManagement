@@ -1,8 +1,15 @@
 <?php
 header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
+header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 header('Content-Type: application/json');
+
+// Rechazar solicitudes que no sean POST
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405); // Método no permitido
+    echo json_encode(['error' => 'Método no permitido. Use POST.']);
+    exit();
+}
 
 require_once '../includes/database.php';
 require_once '../includes/auth.php';
