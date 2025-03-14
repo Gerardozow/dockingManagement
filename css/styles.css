@@ -1,0 +1,20 @@
+/* Efecto hover en tarjetas */
+.dock-card {
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  
+  .dock-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
+  }
+  
+  /* Altura fija para cards */
+  .card {
+    min-height: 200px;
+  }
+  
+  /* Mejora visual para modal */
+  #editModal .form-label {
+    font-weight: 500;
+    margin-bottom: 0.3rem;
+  }
