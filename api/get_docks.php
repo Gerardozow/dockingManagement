@@ -23,7 +23,7 @@ try {
 
     // Agrupar docks por área
     $groupedDocks = [
-        'recibo' => [],
+        'recepcion' => [],
         'embarque' => [],
         'exterior' => []
     ];
