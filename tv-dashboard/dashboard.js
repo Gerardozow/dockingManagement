@@ -1,10 +1,22 @@
+document.addEventListener("DOMContentLoaded", () => {
+  fetchDocksData(); // Llama la primera vez
+  setInterval(fetchDocksData, 5000); // Refresca cada 5 segundos (ajustable)
+});
+
+function fetchDocksData() {
+  fetch("get_docks.php")
+    .then((response) => response.json())
+    .then((data) => updateDockingStatus(data))
+    .catch((error) => console.error("Error al obtener los datos:", error));
+}
+
 function updateDockingStatus(docks) {
   const statusContainer = document.getElementById("docking-status");
-  statusContainer.innerHTML = ""; // Limpiar antes de agregar nuevo contenido
+  statusContainer.innerHTML = ""; // Limpia el contenido antes de agregar nuevo
 
-  // Agrupar docks por tipo
+  // Agrupar los docks por su tipo
   const grupos = {
-    Recepcion: [],
+    Recibo: [],
     Embarque: [],
     Exterior: [],
   };
@@ -15,25 +27,23 @@ function updateDockingStatus(docks) {
     }
   });
 
-  // Recorrer cada grupo y crear su bloque
+  // Crear el HTML para cada grupo
   for (const [grupoNombre, docksGrupo] of Object.entries(grupos)) {
     const grupoDiv = document.createElement("div");
     grupoDiv.classList.add("grupo");
 
-    // Título del grupo
     const titulo = document.createElement("h2");
     titulo.textContent = grupoNombre;
     grupoDiv.appendChild(titulo);
 
-    // Contenedor de docks dentro del grupo
     const docksContainer = document.createElement("div");
     docksContainer.classList.add("docks-container");
 
-    // Agregar los docks al contenedor
+    // Crear cada dock dentro del grupo
     docksGrupo.forEach((dock) => {
       const dockDiv = document.createElement("div");
       dockDiv.classList.add("dock");
-      dockDiv.classList.add(dock.estado.toLowerCase()); // libre u ocupado
+      dockDiv.classList.add(dock.estado.toLowerCase()); // 'libre' o 'ocupado'
 
       dockDiv.innerHTML = `
           <strong>${dock.nombre}</strong>
@@ -44,10 +54,7 @@ function updateDockingStatus(docks) {
       docksContainer.appendChild(dockDiv);
     });
 
-    // Agregar el contenedor de docks al grupo
     grupoDiv.appendChild(docksContainer);
-
-    // Finalmente agregar el grupo al contenedor principal
     statusContainer.appendChild(grupoDiv);
   }
 }
