@@ -1,2 +1,1 @@
-conexion.php
-php/config.php
+includes/database.php
