@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
         container.innerHTML = "";
 
         // Mostrar docks de Recibo
-        if (groupedDocks.recibo.length > 0) {
+        if (groupedDocks.recepcion.length > 0) {
           container.innerHTML += `
                       <div class="mb-4">
                           <h3 class="h5 mb-3">Recibo</h3>
