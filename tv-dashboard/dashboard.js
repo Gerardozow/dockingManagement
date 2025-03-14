@@ -22,9 +22,12 @@ function updateDashboard(data) {
     const grupo = document.createElement("div");
     grupo.className = "grupo";
 
+    const grupoContenedor = document.createElement("div");
+    grupo.className = "grupo-contenedor";
+
     const titulo = document.createElement("h2");
     titulo.textContent = tipo.charAt(0).toUpperCase() + tipo.slice(1);
-    grupo.appendChild(titulo);
+    grupo..appendChild(grupoContenedor).appendChild(titulo);
 
     data[tipo].forEach((dock) => {
       const dockElement = document.createElement("div");
