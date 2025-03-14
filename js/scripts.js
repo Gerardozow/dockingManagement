@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
           container.innerHTML += `
                       <div class="dock-section">
                           <h3>Recibo</h3>
-                          <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xxl-4 g-3">
+                          <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xxl-6 g-3">
                               ${groupedDocks.recepcion
                                 .map((dock) => createDockCard(dock))
                                 .join("")}
@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
           container.innerHTML += `
                       <div class="dock-section">
                           <h3>Embarques</h3>
-                          <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xxl-4 g-3">
+                          <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xxl-6 g-3">
                               ${groupedDocks.embarque
                                 .map((dock) => createDockCard(dock))
                                 .join("")}
@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
           container.innerHTML += `
                       <div class="dock-section">
                           <h3>Exterior</h3>
-                          <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xxl-4 g-3">
+                          <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xxl-6 g-3">
                               ${groupedDocks.exterior
                                 .map((dock) => createDockCard(dock))
                                 .join("")}
