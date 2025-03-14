@@ -65,13 +65,7 @@ checkAuth();
                 </div>
                 <div class="modal-body">
                     <form id="editForm">
-                        <?php if (getUserRole() === 'admin'): ?>
-                        <div class="mb-3">
-                            <label class="form-label">Nombre del Dock</label>
-                            <input type="text" class="form-control" id="editDockName" required>
-                        </div>
-                        <?php endif; ?>
-                        
+                                               
                         <div class="mb-3">
                             <label class="form-label">Cliente</label>
                             <input type="text" class="form-control" id="editClientName">

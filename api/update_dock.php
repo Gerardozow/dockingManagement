@@ -9,71 +9,33 @@ header('Content-Type: application/json');
 try {
     $data = json_decode(file_get_contents('php://input'), true);
     $dockId = $_GET['id'];
-    $userRole = $_SESSION['role'];
-
-    // Validación del ID del dock
-    if (!is_numeric($dockId)) {
-        throw new Exception('ID de dock inválido');
-    }
-
-    // Validación para administradores
-    if ($userRole === 'admin') {
-        if (!isset($data['name']) || empty(trim($data['name']))) {
-            throw new Exception('El nombre del dock es obligatorio');
-        }
-        
-        if (strlen(trim($data['name'])) > 100) {
-            throw new Exception('El nombre no puede exceder 100 caracteres');
-        }
-    }
-
-    // Construir la consulta dinámicamente
-    $updates = [];
-    $params = [];
-    $types = '';
-
-    if ($userRole === 'admin') {
-        $updates[] = 'name = ?';
-        $params[] = trim($data['name']);
-        $types .= 's';
-    }
-
-    $updates[] = 'client_name = ?';
-    $params[] = trim($data['client_name'] ?? '');
-    $types .= 's';
-
-    $updates[] = 'details = ?';
-    $params[] = trim($data['details'] ?? '');
-    $types .= 's';
-
-    $updates[] = 'status = ?';
-    $params[] = $data['status'];
-    $types .= 's';
-
-    // Manejo de tiempos
-    $startTime = ($data['status'] === 'ocupado') ? 'NOW()' : 'start_time';
-    $endTime = ($data['status'] === 'disponible') ? 'NOW()' : 'end_time';
     
-    $query = "UPDATE docks SET 
-        " . implode(', ', $updates) . ",
-        start_time = $startTime,
-        end_time = $endTime
+    $query = "UPDATE docks SET
+        client_name = ?,
+        details = ?,
+        status = ?,
+        start_time = IF(? = 'ocupado', NOW(), start_time),
+        end_time = IF(? = 'disponible', NOW(), end_time)
         WHERE id = ?";
-    
-    $params[] = $dockId;
-    $types .= 'i';
 
-    // Ejecutar consulta
     $stmt = $conn->prepare($query);
-    $stmt->bind_param($types, ...$params);
+    $stmt->bind_param('sssssi',
+        $data['client_name'],
+        $data['details'],
+        $data['status'],
+        $data['status'],
+        $data['status'],
+        $dockId
+    );
 
-    if (!$stmt->execute()) {
-        throw new Exception('Error en la base de datos: ' . $stmt->error);
+    if ($stmt->execute()) {
+        echo json_encode(['success' => true]);
+    } else {
+        throw new Exception('Error al actualizar: ' . $stmt->error);
     }
-
-    echo json_encode(['success' => true]);
 
 } catch (Exception $e) {
-    http_response_code(400);
+    http_response_code(500);
     echo json_encode(['error' => $e->getMessage()]);
 }
+?>
