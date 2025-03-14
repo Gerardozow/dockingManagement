@@ -41,9 +41,30 @@ checkAuth();
   </div>
 
   <!-- Modal de edición -->
-  <div class="modal fade" id="editModal">
-    <!-- Contenido del modal aquí -->
-  </div>
+<div class="modal fade" id="editModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <!-- ... -->
+        <div class="modal-body">
+            <input type="hidden" id="editDockId">
+            <div class="mb-3">
+            <label>Cliente</label>
+            <input type="text" class="form-control" id="editClientName">
+            </div>
+            <div class="mb-3">
+            <label>Estado</label>
+            <select class="form-select" id="editStatus">
+                <!-- opciones -->
+            </select>
+            </div>
+            <div class="mb-3">
+            <label>Detalles</label>
+            <textarea class="form-control" id="editDetails"></textarea>
+            </div>
+        </div>
+        </div>
+    </div>
+</div>
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
