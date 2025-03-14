@@ -3,19 +3,20 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard de Docks</title>
-    <link rel="stylesheet" href="css/dashboard.css">
+    <title>Monitor de Dockings</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 
-<body>
+<body onload="startAutoRefresh()">
 
-    <h1>Estado de los Docks</h1>
-
-    <div id="docks-grid-container" class="docks-grid">
-        <!-- Los docks se llenan dinámicamente aquí -->
+    <div class="container">
+        <h1>Estado de los Dockings</h1>
+        <div id="docking-status">
+            Cargando información...
+        </div>
     </div>
 
-    <script src="js/dashboard.js"></script>
+    <script src="dashboard.js"></script>
 </body>
 
 </html>
