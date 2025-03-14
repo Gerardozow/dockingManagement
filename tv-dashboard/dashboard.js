@@ -1,60 +1,105 @@
-document.addEventListener("DOMContentLoaded", () => {
-  fetchDocksData(); // Llama la primera vez
-  setInterval(fetchDocksData, 5000); // Refresca cada 5 segundos (ajustable)
-});
-
-function fetchDocksData() {
-  fetch("../api/get_docks.php")
-    .then((response) => response.json())
-    .then((data) => updateDockingStatus(data))
-    .catch((error) => console.error("Error al obtener los datos:", error));
+function startAutoRefresh() {
+  fetchDockingStatus(); // carga inicial
+  setInterval(fetchDockingStatus, 5000); // refresca cada 10 segundos
 }
 
-function updateDockingStatus(docks) {
-  const statusContainer = document.getElementById("docking-status");
-  statusContainer.innerHTML = ""; // Limpia el contenido antes de agregar nuevo
+function fetchDockingStatus() {
+  fetch("../api/get_docks.php")
+    .then((response) => response.json())
+    .then((data) => updateDashboard(data))
+    .catch((error) => {
+      console.error("Error obteniendo los datos:", error);
+      const container = document.getElementById("docking-status");
+      container.innerHTML = `<p style="color: red;">Error al cargar los datos</p>`;
+    });
+}
 
-  // Agrupar los docks por su tipo
-  const grupos = {
-    Recibo: [],
-    Embarque: [],
-    Exterior: [],
-  };
+function updateDashboard(data) {
+  const container = document.getElementById("docking-status");
+  container.innerHTML = "";
 
-  docks.forEach((dock) => {
-    if (grupos[dock.tipo]) {
-      grupos[dock.tipo].push(dock);
-    }
-  });
-
-  // Crear el HTML para cada grupo
-  for (const [grupoNombre, docksGrupo] of Object.entries(grupos)) {
-    const grupoDiv = document.createElement("div");
-    grupoDiv.classList.add("grupo");
+  for (let tipo in data) {
+    const grupo = document.createElement("div");
+    grupo.className = "grupo";
 
     const titulo = document.createElement("h2");
-    titulo.textContent = grupoNombre;
-    grupoDiv.appendChild(titulo);
+    titulo.textContent = tipo.charAt(0).toUpperCase() + tipo.slice(1);
+    grupo.appendChild(titulo);
 
-    const docksContainer = document.createElement("div");
-    docksContainer.classList.add("docks-container");
+    data[tipo].forEach((dock) => {
+      const dockElement = document.createElement("div");
+      dockElement.className = `dock ${dock.status.toLowerCase()}`;
 
-    // Crear cada dock dentro del grupo
-    docksGrupo.forEach((dock) => {
-      const dockDiv = document.createElement("div");
-      dockDiv.classList.add("dock");
-      dockDiv.classList.add(dock.estado.toLowerCase()); // 'libre' o 'ocupado'
+      dockElement.innerHTML = `
+          <strong>${dock.name}</strong><br>
+          Estado: ${dock.status}<br>
+          Última actualización: ${dock.updated_at || "N/A"}
+        `;
 
-      dockDiv.innerHTML = `
+      grupo.appendChild(dockElement);
+    });
+
+    container.appendChild(grupo);
+  }
+}
+
+function toggleFullscreen() {
+  const elem = document.documentElement;
+  if (!document.fullscreenElement) {
+    elem.requestFullscreen().catch((err) => {
+      alert(`Error al intentar pantalla completa: ${err.message}`);
+    });
+  } else {
+    document.exitFullscreen();
+  }
+}
+
+
+function updateDockingStatus(docks) {
+    const statusContainer = document.getElementById('docking-status');
+    statusContainer.innerHTML = ''; // Limpiar antes de agregar nuevo contenido
+  
+    // Agrupar docks por tipo
+    const grupos = {
+      Recibo: [],
+      Embarque: [],
+      Exterior: []
+    };
+  
+    docks.forEach(dock => {
+      if (grupos[dock.tipo]) {
+        grupos[dock.tipo].push(dock);
+      }
+    });
+  
+    // Recorrer cada grupo y crear su bloque
+    for (const [grupoNombre, docksGrupo] of Object.entries(grupos)) {
+      const grupoDiv = document.createElement('div');
+      grupoDiv.classList.add('grupo');
+  
+      // Título del grupo
+      const titulo = document.createElement('h2');
+      titulo.textContent = grupoNombre;
+      grupoDiv.appendChild(titulo);
+  
+      // Contenedor de docks dentro del grupo
+      const docksContainer = document.createElement('div');
+      docksContainer.classList.add('docks-container');
+  
+      // Agregar los docks al contenedor
+      docksGrupo.forEach(dock => {
+        const dockDiv = document.createElement('div');
+        dockDiv.classList.add('dock');
+        dockDiv.classList.add(dock.estado.toLowerCase()); // libre u ocupado
+  
+        dockDiv.innerHTML = `
           <strong>${dock.nombre}</strong>
           Estado: ${dock.estado}<br>
           <small>Actualizado: ${dock.actualizado}</small>
         `;
-
-      docksContainer.appendChild(dockDiv);
-    });
-
-    grupoDiv.appendChild(docksContainer);
-    statusContainer.appendChild(grupoDiv);
-  }
-}
+  
+        docksContainer.appendChild(dockDiv);
+      });
+  
+      // Agregar el contened
+  
