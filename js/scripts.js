@@ -97,13 +97,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Evento para guardar cambios
   document.getElementById("saveChanges").addEventListener("click", () => {
-    if (
-      userRole === "admin" &&
-      !document.getElementById("editDockName").value.trim()
-    ) {
-      showToast("El nombre del dock es obligatorio", "warning");
-      return;
-    }
+    // Validación reforzada para admin
+    if (userRole === 'admin') {
+      const nameInput = document.getElementById('editDockName');
+      const dockName = nameInput.value.trim();
+      
+      if (!dockName) {
+          nameInput.focus();
+          nameInput.classList.add('is-invalid');
+          showToast('¡El nombre del dock es obligatorio!', 'warning');
+          return;
+      }
+      
+      if (dockName.length > 100) {
+          nameInput.focus();
+          nameInput.classList.add('is-invalid');
+          showToast('Máximo 100 caracteres para el nombre', 'warning');
+          return;
+      }
+      
+      nameInput.classList.remove('is-invalid');
+      data.name = dockName;
 
     const data = {
       client_name: document.getElementById("editClientName").value.trim(),

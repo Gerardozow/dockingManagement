@@ -10,16 +10,19 @@ $data = json_decode(file_get_contents('php://input'), true);
 $dockId = $_GET['id'];
 
 // Validaciones para admin
+// En la validación del nombre:
 if ($userRole === 'admin') {
-    if (empty($data['name'])) {
+    $name = trim($data['name'] ?? '');
+    
+    if (empty($name)) {
         http_response_code(400);
-        echo json_encode(['error' => 'El nombre del dock es obligatorio']);
+        echo json_encode(['error' => 'El nombre no puede estar vacío']);
         exit();
     }
     
-    if (strlen($data['name']) > 100) {
+    if (strlen($name) > 100) {
         http_response_code(400);
-        echo json_encode(['error' => 'El nombre no puede exceder 100 caracteres']);
+        echo json_encode(['error' => 'El nombre debe tener menos de 100 caracteres']);
         exit();
     }
 } else {
