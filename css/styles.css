@@ -1,20 +1,53 @@
-/* Efecto hover en tarjetas */
+/* Estilos generales */
+body {
+    background-color: #f8f9fa;
+}
+
 .dock-card {
     transition: transform 0.2s, box-shadow 0.2s;
-  }
-  
-  .dock-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
-  }
-  
-  /* Altura fija para cards */
-  .card {
-    min-height: 200px;
-  }
-  
-  /* Mejora visual para modal */
-  #editModal .form-label {
-    font-weight: 500;
-    margin-bottom: 0.3rem;
-  }
+    min-height: 180px;
+}
+
+.dock-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15);
+}
+
+/* Responsividad */
+@media (max-width: 767px) {
+    .container {
+        padding: 0 10px;
+    }
+
+    .dock-card .card-title {
+        font-size: 1rem;
+    }
+
+    .btn-sm {
+        padding: 5px 10px;
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 575px) {
+    .modal-dialog {
+        margin: 10px;
+    }
+
+    .modal-content {
+        border-radius: 0;
+    }
+}
+
+/* Navbar móvil */
+.navbar-toggler {
+    border: none;
+}
+
+/* Toast notifications */
+.toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+}

@@ -8,71 +8,89 @@ checkAuth();
 <!DOCTYPE html>
 <html>
 <head>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-  <?php include 'includes/navbar.php'; ?>
-  
-  <div class="container mt-4">
-    <h1 class="text-center mb-4">Gestión de Docks</h1>
-    <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4" id="docks-container">
-      <?php foreach (getAllDocks() as $dock): ?>
-        <div class="col">
-          <div class="card h-100 border-<?= getStatusColor($dock['status']) ?>">
-            <div class="card-header bg-<?= getStatusColor($dock['status']) ?> text-white">
-              <h5 class="card-title mb-0">Dock #<?= $dock['id'] ?></h5>
-              <small><?= ucfirst($dock['type']) ?></small>
+    <?php include 'includes/navbar.php'; ?>
+    
+    <div class="container mt-3">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h4 mb-0">Gestión de Docks</h1>
+            <div class="d-none d-md-block">
+                <span class="badge bg-primary"><?= $_SESSION['username'] ?></span>
             </div>
-            <div class="card-body">
-              <p class="card-text"><strong>Estado:</strong> <?= ucfirst($dock['status']) ?></p>
-              <p class="card-text"><strong>Cliente:</strong> <?= $dock['client_name'] ?: 'N/A' ?></p>
-            </div>
-            <div class="card-footer">
-              <button class="btn btn-outline-primary w-100" 
-                      onclick="openEditModal(<?= $dock['id'] ?>)">
-                Editar
-              </button>
-            </div>
-          </div>
         </div>
-      <?php endforeach; ?>
-    </div>
-  </div>
-
-  <!-- Modal de edici -->
-<div class="modal fade" id="editModal">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <!-- ... -->
-            <div class="modal-body">
-                <input type="hidden" id="editDockId">
-                <div class="mb-3">
-                <label>Cliente</label>
-                <input type="text" class="form-control" id="editClientName">
+        
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xxl-4 g-2" id="docks-container">
+            <?php foreach (getAllDocks() as $dock): ?>
+                <div class="col">
+                    <div class="card h-100 shadow-sm border-<?= getStatusColor($dock['status']) ?>">
+                        <div class="card-header py-2 bg-<?= getStatusColor($dock['status']) ?> text-white">
+                            <div class="d-flex justify-content-between">
+                                <div class="fw-bold">Dock #<?= $dock['id'] ?></div>
+                                <small><?= strtoupper($dock['type']) ?></small>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unstyled mb-0">
+                                <li><strong>Estado:</strong> <?= ucfirst($dock['status']) ?></li>
+                                <li><strong>Cliente:</strong> <?= $dock['client_name'] ?: 'N/A' ?></li>
+                                <li><small>Inicio: <?= $dock['start_time'] ? date('H:i', strtotime($dock['start_time'])) : '--:--' ?></small></li>
+                            </ul>
+                        </div>
+                        <div class="card-footer bg-transparent py-2">
+                            <button class="btn btn-outline-primary btn-sm w-100" 
+                                    onclick="openEditModal(<?= $dock['id'] ?>)">
+                                <i class="bi bi-pencil"></i> Editar
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <div class="mb-3">
-                <label>Estado</label>
-                <select class="form-select" id="editStatus">
-                    <option value="disponible">Disponible</option>
-                    <option value="ocupado">Ocupado</option>
-                    <option value="cerrado">Cerrado</option>
-                </select>
-                </div>
-                <div class="mb-3">
-                <label>Detalles</label>
-                <textarea class="form-control" id="editDetails"></textarea>
-                </div>
-            </div>
-            <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-        <button type="button" class="btn btn-primary" id="saveChanges">Guardar</button> <!-- ¡ID correcto! -->
+            <?php endforeach; ?>
         </div>
     </div>
-</div>
 
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="js/scripts.js"></script>
+    <!-- Modal de Edición -->
+    <div class="modal fade" id="editModal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Editar Dock #<span id="modalDockId"></span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editForm">
+                        <div class="mb-3">
+                            <label class="form-label">Cliente</label>
+                            <input type="text" class="form-control" id="editClientName">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Estado</label>
+                            <select class="form-select" id="editStatus">
+                                <option value="disponible">Disponible</option>
+                                <option value="ocupado">Ocupado</option>
+                                <option value="cerrado">Cerrado</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Detalles</label>
+                            <textarea class="form-control" id="editDetails" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="saveChanges">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/scripts.js"></script>
 </body>
 </html>

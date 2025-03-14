@@ -1,105 +1,124 @@
-// Actualización automática
-function updateDocks() {
-  fetch("api/get_docks.php")
-    .then((res) => {
-      if (!res.ok) throw new Error("Error en la respuesta");
-      return res.json();
-    })
-    .then((docks) => {
-      // Verificar si es un array
-      if (!Array.isArray(docks)) {
-        console.error("La API no devolvió un array:", docks);
-        return;
-      }
+document.addEventListener("DOMContentLoaded", () => {
+  let currentDockId = null;
+  const toastContainer = document.createElement("div");
+  document.body.appendChild(toastContainer);
 
-      const container = document.getElementById("docks-container");
-      container.innerHTML = docks
-        .map(
-          (dock) => `
-        <div class="col">
-          <div class="card h-100 border-${getStatusColor(dock.status)}">
-            <div class="card-header bg-${getStatusColor(
-              dock.status
-            )} text-white">
-              <h5 class="card-title mb-0">Dock #${dock.id}</h5>
-              <small>${
-                dock.type?.charAt(0)?.toUpperCase() + dock.type?.slice(1)
-              }</small>
-            </div>
-            <div class="card-body">
-              <p class="card-text"><strong>Estado:</strong> ${
-                dock.status?.charAt(0)?.toUpperCase() + dock.status?.slice(1)
-              }</p>
-              <p class="card-text"><strong>Cliente:</strong> ${
-                dock.client_name || "N/A"
-              }</p>
-            </div>
-            <div class="card-footer">
-              <button class="btn btn-outline-primary w-100" 
-                      onclick="openEditModal(${dock.id})">
-                Editar
-              </button>
-            </div>
-          </div>
-        </div>
-      `
-        )
-        .join("");
-    })
-    .catch((error) => console.error("Error:", error));
-}
+  // Actualizar docks
+  function updateDocks() {
+    fetch("api/get_docks.php")
+      .then((res) => res.json())
+      .then((docks) => {
+        const container = document.getElementById("docks-container");
+        container.innerHTML = docks
+          .map(
+            (dock) => `
+                  <div class="col">
+                      <div class="card h-100 shadow-sm border-${getStatusColor(
+                        dock.status
+                      )}">
+                          <div class="card-header py-2 bg-${getStatusColor(
+                            dock.status
+                          )} text-white">
+                              <div class="d-flex justify-content-between">
+                                  <div class="fw-bold">Dock #${dock.id}</div>
+                                  <small>${dock.type.toUpperCase()}</small>
+                              </div>
+                          </div>
+                          <div class="card-body">
+                              <ul class="list-unstyled mb-0">
+                                  <li><strong>Estado:</strong> ${
+                                    dock.status.charAt(0).toUpperCase() +
+                                    dock.status.slice(1)
+                                  }</li>
+                                  <li><strong>Cliente:</strong> ${
+                                    dock.client_name || "N/A"
+                                  }</li>
+                                  <li><small>Inicio: ${
+                                    dock.start_time
+                                      ? new Date(
+                                          dock.start_time
+                                        ).toLocaleTimeString()
+                                      : "--:--"
+                                  }</small></li>
+                              </ul>
+                          </div>
+                          <div class="card-footer bg-transparent py-2">
+                              <button class="btn btn-outline-primary btn-sm w-100" 
+                                      onclick="openEditModal(${dock.id})">
+                                  <i class="bi bi-pencil"></i> Editar
+                              </button>
+                          </div>
+                      </div>
+                  </div>
+              `
+          )
+          .join("");
+      });
+  }
 
-// Actualizar cada 10 segundos
-setInterval(updateDocks, 10000);
+  // Función auxiliar para colores
+  function getStatusColor(status) {
+    const colors = {
+      ocupado: "danger",
+      disponible: "success",
+      cerrado: "secondary",
+    };
+    return colors[status] || "light";
+  }
 
-// Función auxiliar para colores
-function getStatusColor(status) {
-  const colors = {
-    ocupado: "danger",
-    disponible: "success",
-    cerrado: "secondary",
-  };
-  return colors[status] || "light";
-}
-
-// js/scripts.js
-let currentDockId = null; // Variable global para guardar el ID
-
-function openEditModal(dockId) {
-  currentDockId = dockId; // Guardar el ID actual
-
-  fetch(`api/get_dock.php?id=${dockId}`)
-    .then((res) => {
-      if (!res.ok) throw new Error("Error al obtener dock");
-      return res.json();
-    })
-    .then((dock) => {
-      if (!dock) throw new Error("Dock no encontrado");
-
-      // Usar operadores de encadenamiento opcional
-      document.getElementById("editClientName").value = dock.client_name || "";
-      document.getElementById("editStatus").value = dock.status || "disponible";
-      document.getElementById("editDetails").value = dock.details || "";
-
-      new bootstrap.Modal(document.getElementById("editModal")).show();
-    })
-    .catch((error) => console.error("Error:", error));
-}
-
-// Evento para guardar cambios
-document.getElementById("saveChanges").addEventListener("click", () => {
-  const data = {
-    client_name: document.getElementById("editClientName").value,
-    status: document.getElementById("editStatus").value,
-    details: document.getElementById("editDetails").value,
+  // Abrir modal de edición
+  window.openEditModal = function (dockId) {
+    currentDockId = dockId;
+    fetch(`api/get_dock.php?id=${dockId}`)
+      .then((res) => res.json())
+      .then((dock) => {
+        document.getElementById("editClientName").value =
+          dock.client_name || "";
+        document.getElementById("editStatus").value = dock.status;
+        document.getElementById("editDetails").value = dock.details || "";
+        new bootstrap.Modal(document.getElementById("editModal")).show();
+      });
   };
 
-  fetch(`api/update_dock.php?id=${currentDockId}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  }).then(() => {
-    updateDocks();
-    bootstrap.Modal.getInstance(document.getElementById("editModal")).hide();
+  // Guardar cambios
+  document.getElementById("saveChanges").addEventListener("click", () => {
+    const data = {
+      client_name: document.getElementById("editClientName").value,
+      status: document.getElementById("editStatus").value,
+      details: document.getElementById("editDetails").value,
+    };
+
+    fetch(`api/update_dock.php?id=${currentDockId}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    })
+      .then(() => {
+        showToast("Cambios guardados exitosamente!");
+        updateDocks();
+        bootstrap.Modal.getInstance(
+          document.getElementById("editModal")
+        ).hide();
+      })
+      .catch(() => showToast("Error al guardar", "danger"));
   });
+
+  // Mostrar notificaciones
+  function showToast(message, type = "success") {
+    const toast = document.createElement("div");
+    toast.className = `toast align-items-center text-white bg-${type}`;
+    toast.innerHTML = `
+          <div class="d-flex">
+              <div class="toast-body">${message}</div>
+              <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"></button>
+          </div>
+      `;
+    toastContainer.appendChild(toast);
+    new bootstrap.Toast(toast).show();
+    setTimeout(() => toast.remove(), 3000);
+  }
+
+  // Actualizar cada 3 segundos
+  setInterval(updateDocks, 3000);
+  updateDocks(); // Carga inicial
 });
