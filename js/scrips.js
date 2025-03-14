@@ -39,8 +39,8 @@ function updateDocks() {
     });
 }
 
-// Actualizar cada 2 segundos
-setInterval(updateDocks, 2000);
+// Actualizar cada 10 segundos
+setInterval(updateDocks, 10000);
 
 // Función auxiliar para colores
 function getStatusColor(status) {
