@@ -21,45 +21,45 @@ document.addEventListener("DOMContentLoaded", () => {
         container.innerHTML = "";
 
         // Mostrar docks de Recibo
-        if (groupedDocks.recepcion.length > 0) {
+        if (groupedDocks.recibo.length > 0) {
           container.innerHTML += `
-                      <div class="mb-4">
-                          <h3 class="h5 mb-3">Recibo</h3>
-                          <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xxl-4 g-2">
-                              ${groupedDocks.recepcion
-                                .map((dock) => createDockCard(dock))
-                                .join("")}
-                          </div>
-                      </div>
-                  `;
+                    <div class="dock-section">
+                        <h3>Recibo</h3>
+                        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xxl-4 g-3">
+                            ${groupedDocks.recibo
+                              .map((dock) => createDockCard(dock))
+                              .join("")}
+                        </div>
+                    </div>
+                `;
         }
 
         // Mostrar docks de Embarques
         if (groupedDocks.embarque.length > 0) {
           container.innerHTML += `
-                      <div class="mb-4">
-                          <h3 class="h5 mb-3">Embarques</h3>
-                          <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xxl-4 g-2">
-                              ${groupedDocks.embarque
-                                .map((dock) => createDockCard(dock))
-                                .join("")}
-                          </div>
-                      </div>
-                  `;
+                    <div class="dock-section">
+                        <h3>Embarques</h3>
+                        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xxl-4 g-3">
+                            ${groupedDocks.embarque
+                              .map((dock) => createDockCard(dock))
+                              .join("")}
+                        </div>
+                    </div>
+                `;
         }
 
         // Mostrar docks de Exterior
         if (groupedDocks.exterior.length > 0) {
           container.innerHTML += `
-                      <div class="mb-4">
-                          <h3 class="h5 mb-3">Exterior</h3>
-                          <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xxl-4 g-2">
-                              ${groupedDocks.exterior
-                                .map((dock) => createDockCard(dock))
-                                .join("")}
-                          </div>
-                      </div>
-                  `;
+                    <div class="dock-section">
+                        <h3>Exterior</h3>
+                        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xxl-4 g-3">
+                            ${groupedDocks.exterior
+                              .map((dock) => createDockCard(dock))
+                              .join("")}
+                        </div>
+                    </div>
+                `;
         }
       })
       .catch((error) => showToast(`Error: ${error.message}`, "danger"));
@@ -68,40 +68,36 @@ document.addEventListener("DOMContentLoaded", () => {
   // Función para crear una tarjeta de dock
   function createDockCard(dock) {
     return `
-          <div class="col">
-              <div class="card h-100 shadow-sm border-${getStatusColor(
-                dock.status
-              )}">
-                  <div class="card-header py-2 bg-${getStatusColor(
-                    dock.status
-                  )} text-white">
-                      <div class="d-flex justify-content-between align-items-center">
-                          <div class="fw-bold">${dock.name}</div>
-                          <small class="text-uppercase">${dock.type}</small>
-                      </div>
-                  </div>
-                  <div class="card-body">
-                      <ul class="list-unstyled mb-0">
-                          <li><strong>Estado:</strong> ${capitalizeFirst(
-                            dock.status
-                          )}</li>
-                          <li><strong>Cliente:</strong> ${
-                            dock.client_name || "N/A"
-                          }</li>
-                          <li><small>Inicio: ${formatTime(
-                            dock.start_time
-                          )}</small></li>
-                      </ul>
-                  </div>
-                  <div class="card-footer bg-transparent py-2">
-                      <button class="btn btn-outline-primary btn-sm w-100" 
-                              onclick="openEditModal(${dock.id})">
-                          <i class="bi bi-pencil"></i> Editar
-                      </button>
+      <div class="col">
+          <div class="card h-100 dock-card">
+              <div class="card-header">
+                  <div class="d-flex justify-content-between align-items-center">
+                      <div class="fw-bold">${dock.name}</div>
+                      <small class="text-uppercase">${dock.type}</small>
                   </div>
               </div>
+              <div class="card-body">
+                  <ul class="list-unstyled mb-0">
+                      <li><strong>Estado:</strong> ${capitalizeFirst(
+                        dock.status
+                      )}</li>
+                      <li><strong>Cliente:</strong> ${
+                        dock.client_name || "N/A"
+                      }</li>
+                      <li><small>Inicio: ${formatTime(
+                        dock.start_time
+                      )}</small></li>
+                  </ul>
+              </div>
+              <div class="card-footer">
+                  <button class="btn btn-outline-primary btn-sm w-100" 
+                          onclick="openEditModal(${dock.id})">
+                      <i class="bi bi-pencil"></i> Editar
+                  </button>
+              </div>
           </div>
-      `;
+      </div>
+  `;
   }
 
   // Función para abrir el modal de edición
