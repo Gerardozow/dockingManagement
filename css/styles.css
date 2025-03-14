@@ -66,25 +66,3 @@
     background-color: #6c757d;
     /* Gris */
 }
-
-/* Modo Claro (por defecto) */
-body {
-    background-color: #ffffff;
-    color: #000000;
-}
-
-.card {
-    background-color: #ffffff;
-    border: 1px solid #dddddd;
-}
-
-/* Modo Oscuro */
-body.dark-mode {
-    background-color: #121212;
-    color: #e0e0e0;
-}
-
-.card.dark-mode {
-    background-color: #1e1e1e;
-    border: 1px solid #444444;
-}
