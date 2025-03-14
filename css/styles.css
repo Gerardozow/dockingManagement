@@ -1,3 +1,6 @@
+body{
+    background-color: #eeeeee;
+}
 /* Estilos para las secciones de docks */
 .dock-section {
     margin-bottom: 2rem;
