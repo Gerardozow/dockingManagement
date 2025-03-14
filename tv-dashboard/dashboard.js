@@ -1,6 +1,6 @@
 function startAutoRefresh() {
   fetchDockingStatus(); // carga inicial
-  setInterval(fetchDockingStatus, 10000); // refresca cada 10 segundos
+  setInterval(fetchDockingStatus, 5000); // refresca cada 10 segundos
 }
 
 function fetchDockingStatus() {
