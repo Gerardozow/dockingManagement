@@ -90,14 +90,18 @@ document.addEventListener("DOMContentLoaded", () => {
         details: document.getElementById("editDetails").value.trim(),
       };
 
-      fetch(`/docking/api/update_dock.php?id=${currentDockId}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      })
-        .then((res) => {
-          if (!res.ok) throw new Error("Error en el servidor");
-          return res.json();
+      fetch(
+        `https://gerardozow.me/docking/api/update_dock.php?id=${currentDockId}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        }
+      )
+        .then((response) => {
+          if (!response.ok)
+            throw new Error(`HTTP error! status: ${response.status}`);
+          return response.json();
         })
         .then((result) => {
           if (result.error) throw new Error(result.error);
@@ -107,7 +111,10 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("editModal")
           ).hide();
         })
-        .catch((error) => showToast(error.message, "danger"));
+        .catch((error) => {
+          console.error("Error:", error);
+          showToast(`Error: ${error.message}`, "danger");
+        });
     } catch (error) {
       showToast(error.message, "warning");
     }
