@@ -72,15 +72,22 @@ document.addEventListener("DOMContentLoaded", () => {
         return res.json();
       })
       .then((dock) => {
+        // Llenar el formulario con los datos del dock
+        document.getElementById("editDockName").value = dock.name || "";
         document.getElementById("editClientName").value =
           dock.client_name || "";
-        document.getElementById("editStatus").value = dock.status;
+        document.getElementById("editStatus").value =
+          dock.status || "disponible";
         document.getElementById("editDetails").value = dock.details || "";
+
+        // Mostrar el modal
         new bootstrap.Modal(document.getElementById("editModal")).show();
       })
-      .catch((error) => showToast(error.message, "warning"));
+      .catch((error) => {
+        console.error("Error:", error);
+        showToast(error.message, "danger");
+      });
   };
-
   // Evento para guardar cambios
   document.getElementById("saveChanges").addEventListener("click", () => {
     try {
