@@ -17,17 +17,21 @@ function updateDockingStatus(docks) {
   const container = document.getElementById("docks-grid");
   container.innerHTML = ""; // Limpia los docks anteriores
 
-  docks.forEach((dock) => {
-    const dockDiv = document.createElement("div");
-    dockDiv.classList.add("dock");
-    dockDiv.classList.add(dock.estado.toLowerCase()); // 'libre' o 'ocupado'
+  if (Array.isArray(docks)) {
+    docks.forEach((dock) => {
+      const dockDiv = document.createElement("div");
+      dockDiv.classList.add("dock");
+      dockDiv.classList.add(dock.estado.toLowerCase()); // libre u ocupado
 
-    dockDiv.innerHTML = `
-      <strong>${dock.nombre}</strong><br>
-      Estado: ${dock.estado}<br>
-      <small>Actualizado: ${dock.actualizado}</small>
-    `;
+      dockDiv.innerHTML = `
+        <strong>${dock.nombre}</strong><br>
+        Estado: ${dock.estado}<br>
+        <small>Actualizado: ${dock.actualizado}</small>
+      `;
 
-    container.appendChild(dockDiv);
-  });
+      container.appendChild(dockDiv);
+    });
+  } else {
+    console.error("Los datos no son un array válido.");
+  }
 }
