@@ -40,7 +40,7 @@ checkAuth();
     </div>
   </div>
 
-  <!-- Modal de edición -->
+  <!-- Modal de edici -->
 <div class="modal fade" id="editModal">
     <div class="modal-dialog">
         <div class="modal-content">
