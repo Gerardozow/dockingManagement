@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
   let currentDockId = null;
-  const userRole = "<?= getUserRole() ?>";
+  const userRole = "<?= getUserRole() ?>"; // Rol del usuario desde PHP
   const toastContainer = document.createElement("div");
   toastContainer.id = "toast-container";
   toastContainer.style.position = "fixed";
@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
   toastContainer.style.zIndex = "9999";
   document.body.appendChild(toastContainer);
 
-  // Función para actualizar docks
+  // Función para actualizar la lista de docks
   function updateDocks() {
     fetch("api/get_docks.php")
       .then((res) => {
@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .catch((error) => showToast(`Error: ${error.message}`, "danger"));
   }
 
-  // Función para abrir modal de edición
+  // Función para abrir el modal de edición
   window.openEditModal = function (dockId) {
     currentDockId = dockId;
     fetch(`api/get_dock.php?id=${dockId}`)
@@ -72,11 +72,6 @@ document.addEventListener("DOMContentLoaded", () => {
         return res.json();
       })
       .then((dock) => {
-        if (userRole === "admin") {
-          const nameInput = document.getElementById("editDockName");
-          nameInput.value = dock.name;
-          nameInput.classList.remove("is-invalid");
-        }
         document.getElementById("editClientName").value =
           dock.client_name || "";
         document.getElementById("editStatus").value = dock.status;
@@ -94,22 +89,6 @@ document.addEventListener("DOMContentLoaded", () => {
         status: document.getElementById("editStatus").value,
         details: document.getElementById("editDetails").value.trim(),
       };
-
-      // Validación para administradores
-      if (userRole === "admin") {
-        const nameInput = document.getElementById("editDockName");
-        data.name = nameInput.value.trim();
-
-        if (!data.name) {
-          nameInput.classList.add("is-invalid");
-          throw new Error("El nombre del dock es obligatorio");
-        }
-
-        if (data.name.length > 100) {
-          nameInput.classList.add("is-invalid");
-          throw new Error("Máximo 100 caracteres para el nombre");
-        }
-      }
 
       fetch(`api/update_dock.php?id=${currentDockId}`, {
         method: "POST",
@@ -168,5 +147,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Inicialización
   updateDocks();
-  setInterval(updateDocks, 3000);
+  setInterval(updateDocks, 3000); // Actualizar cada 3 segundos
 });
