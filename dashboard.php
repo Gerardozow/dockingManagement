@@ -44,24 +44,27 @@ checkAuth();
 <div class="modal fade" id="editModal">
     <div class="modal-dialog">
         <div class="modal-content">
-        <!-- ... -->
-        <div class="modal-body">
-            <input type="hidden" id="editDockId">
-            <div class="mb-3">
-            <label>Cliente</label>
-            <input type="text" class="form-control" id="editClientName">
+            <!-- ... -->
+            <div class="modal-body">
+                <input type="hidden" id="editDockId">
+                <div class="mb-3">
+                <label>Cliente</label>
+                <input type="text" class="form-control" id="editClientName">
+                </div>
+                <div class="mb-3">
+                <label>Estado</label>
+                <select class="form-select" id="editStatus">
+                    <!-- opciones -->
+                </select>
+                </div>
+                <div class="mb-3">
+                <label>Detalles</label>
+                <textarea class="form-control" id="editDetails"></textarea>
+                </div>
             </div>
-            <div class="mb-3">
-            <label>Estado</label>
-            <select class="form-select" id="editStatus">
-                <!-- opciones -->
-            </select>
-            </div>
-            <div class="mb-3">
-            <label>Detalles</label>
-            <textarea class="form-control" id="editDetails"></textarea>
-            </div>
-        </div>
+            <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" id="saveChanges">Guardar</button> <!-- ¡ID correcto! -->
         </div>
     </div>
 </div>
