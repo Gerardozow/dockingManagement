@@ -46,4 +46,41 @@ h1 {
 .docks-container {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
-    gap: 1
+    gap: 15px;
+}
+
+/* Cada dock individual */
+.dock {
+    background-color: #222;
+    border: 2px solid #444;
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+    transition: transform 0.2s;
+}
+
+.dock:hover {
+    transform: scale(1.05);
+}
+
+/* Estados de los docks */
+.dock.libre {
+    border-color: #4CAF50;
+    background-color: #2E7D32;
+}
+
+.dock.ocupado {
+    border-color: #F44336;
+    background-color: #C62828;
+}
+
+.dock strong {
+    display: block;
+    font-size: 1.2em;
+    margin-bottom: 5px;
+}
+
+.dock small {
+    font-size: 0.8em;
+    color: #ccc;
+}
