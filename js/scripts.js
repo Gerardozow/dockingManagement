@@ -86,7 +86,7 @@ function openEditModal(dockId) {
     .catch((error) => console.error("Error:", error));
 }
 
-// Modificar el evento de guardar
+// Evento para guardar cambios
 document.getElementById("saveChanges").addEventListener("click", () => {
   const data = {
     client_name: document.getElementById("editClientName").value,
@@ -95,7 +95,6 @@ document.getElementById("saveChanges").addEventListener("click", () => {
   };
 
   fetch(`api/update_dock.php?id=${currentDockId}`, {
-    // Usar la variable guardada
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),

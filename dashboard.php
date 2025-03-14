@@ -54,7 +54,9 @@ checkAuth();
                 <div class="mb-3">
                 <label>Estado</label>
                 <select class="form-select" id="editStatus">
-                    <!-- opciones -->
+                    <option value="disponible">Disponible</option>
+                    <option value="ocupado">Ocupado</option>
+                    <option value="cerrado">Cerrado</option>
                 </select>
                 </div>
                 <div class="mb-3">
