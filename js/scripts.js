@@ -21,12 +21,12 @@ document.addEventListener("DOMContentLoaded", () => {
         container.innerHTML = "";
 
         // Mostrar docks de Recibo
-        if (groupedDocks.recibo.length > 0) {
+        if (groupedDocks.recepcion.length > 0) {
           container.innerHTML += `
                       <div class="dock-section">
                           <h3>Recibo</h3>
                           <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xxl-4 g-3">
-                              ${groupedDocks.recibo
+                              ${groupedDocks.recepcion
                                 .map((dock) => createDockCard(dock))
                                 .join("")}
                           </div>
