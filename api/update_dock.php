@@ -4,6 +4,8 @@ header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 header('Content-Type: application/json');
 
+date_default_timezone_set('America/Mexico_City');
+
 require_once '../includes/database.php';
 require_once '../includes/helpers.php';
 require_once '../includes/auth.php';
