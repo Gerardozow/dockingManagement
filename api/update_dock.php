@@ -4,6 +4,7 @@ header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 header('Content-Type: application/json');
 
+// Establecer la zona horaria de México
 date_default_timezone_set('America/Mexico_City');
 
 require_once '../includes/database.php';
@@ -39,17 +40,20 @@ try {
     $clientName = $data['client_name'] ?? '';
     $details = $data['details'] ?? '';
 
+    // Obtener la hora actual en la zona horaria de México
+    $currentTime = date('Y-m-d H:i:s'); // Formato compatible con MySQL
+
     // Actualizar tiempos automáticamente
-    $startTime = ($data['status'] === 'ocupado') ? 'NOW()' : 'start_time';
-    $endTime = ($data['status'] === 'disponible') ? 'NOW()' : 'end_time';
+    $startTime = ($data['status'] === 'ocupado') ? $currentTime : 'start_time';
+    $endTime = ($data['status'] === 'disponible') ? $currentTime : 'end_time';
 
     // Construir consulta SQL
     $query = "UPDATE docks SET
         client_name = ?,
         details = ?,
         status = ?,
-        start_time = $startTime,
-        end_time = $endTime
+        start_time = ?,
+        end_time = ?
         WHERE id = ?";
 
     $stmt = $conn->prepare($query);
@@ -58,10 +62,12 @@ try {
     }
 
     // Ejecutar consulta
-    $stmt->bind_param('sssi',
+    $stmt->bind_param('sssssi',
         $clientName, // Puede estar vacío
         $details,    // Puede estar vacío
         $data['status'],
+        $startTime,
+        $endTime,
         $dockId
     );
 
