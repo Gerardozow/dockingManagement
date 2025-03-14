@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function fetchDocksData() {
-  fetch("api/get_docks.php")
+  fetch("../api/get_docks.php")
     .then((response) => response.json())
     .then((data) => {
       console.log(data); // Verifica en la consola si los datos están llegando correctamente
