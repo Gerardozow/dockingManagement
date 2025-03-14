@@ -65,3 +65,27 @@ button:hover {
     color: #00BCD4;
     margin-bottom: 20px;
 }
+
+#docking-status {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 20px;
+    justify-items: center;
+}
+
+.grupo {
+    background-color: #1e1e1e;
+    padding: 20px;
+    border-radius: 15px;
+    width: 100%;
+}
+
+.grupo h2 {
+    font-size: 2em;
+    color: #00BCD4;
+    margin-bottom: 15px;
+}
+
+.dock {
+    margin: 10px auto;
+}
