@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
                       <div class="mb-4">
                           <h3 class="h5 mb-3">Recibo</h3>
                           <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xxl-4 g-2">
-                              ${groupedDocks.recibo
+                              ${groupedDocks.recepcion
                                 .map((dock) => createDockCard(dock))
                                 .join("")}
                           </div>
