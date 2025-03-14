@@ -1,9 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   let currentDockId = null;
-  const toastContainer = document.createElement("div");
-  document.body.appendChild(toastContainer);
+  const userRole = "<?= getUserRole() ?>"; // PHP a JS
 
-  // Actualizar docks
   function updateDocks() {
     fetch("api/get_docks.php")
       .then((res) => res.json())
@@ -20,7 +18,13 @@ document.addEventListener("DOMContentLoaded", () => {
                             dock.status
                           )} text-white">
                               <div class="d-flex justify-content-between">
-                                  <div class="fw-bold">Dock #${dock.id}</div>
+                                  <div class="fw-bold">
+                                      ${
+                                        dock.name
+                                          ? dock.name
+                                          : "Dock #" + dock.id
+                                      }
+                                  </div>
                                   <small>${dock.type.toUpperCase()}</small>
                               </div>
                           </div>
@@ -56,22 +60,14 @@ document.addEventListener("DOMContentLoaded", () => {
       });
   }
 
-  // Función auxiliar para colores
-  function getStatusColor(status) {
-    const colors = {
-      ocupado: "danger",
-      disponible: "success",
-      cerrado: "secondary",
-    };
-    return colors[status] || "light";
-  }
-
-  // Abrir modal de edición
   window.openEditModal = function (dockId) {
     currentDockId = dockId;
     fetch(`api/get_dock.php?id=${dockId}`)
       .then((res) => res.json())
       .then((dock) => {
+        if (userRole === "admin") {
+          document.getElementById("editDockName").value = dock.name || "";
+        }
         document.getElementById("editClientName").value =
           dock.client_name || "";
         document.getElementById("editStatus").value = dock.status;
@@ -80,13 +76,16 @@ document.addEventListener("DOMContentLoaded", () => {
       });
   };
 
-  // Guardar cambios
   document.getElementById("saveChanges").addEventListener("click", () => {
     const data = {
       client_name: document.getElementById("editClientName").value,
       status: document.getElementById("editStatus").value,
       details: document.getElementById("editDetails").value,
     };
+
+    if (userRole === "admin") {
+      data.name = document.getElementById("editDockName").value;
+    }
 
     fetch(`api/update_dock.php?id=${currentDockId}`, {
       method: "POST",
@@ -103,22 +102,5 @@ document.addEventListener("DOMContentLoaded", () => {
       .catch(() => showToast("Error al guardar", "danger"));
   });
 
-  // Mostrar notificaciones
-  function showToast(message, type = "success") {
-    const toast = document.createElement("div");
-    toast.className = `toast align-items-center text-white bg-${type}`;
-    toast.innerHTML = `
-          <div class="d-flex">
-              <div class="toast-body">${message}</div>
-              <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"></button>
-          </div>
-      `;
-    toastContainer.appendChild(toast);
-    new bootstrap.Toast(toast).show();
-    setTimeout(() => toast.remove(), 3000);
-  }
-
-  // Actualizar cada 3 segundos
-  setInterval(updateDocks, 3000);
-  updateDocks(); // Carga inicial
+  // Resto del código igual...
 });

@@ -19,9 +19,9 @@ checkAuth();
     <div class="container mt-3">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="h4 mb-0">Gestión de Docks</h1>
-            <div class="d-none d-md-block">
-                <span class="badge bg-primary"><?= $_SESSION['username'] ?></span>
-            </div>
+            <?php if (getUserRole() === 'admin'): ?>
+                <span class="badge bg-danger">ADMINISTRADOR</span>
+            <?php endif; ?>
         </div>
         
         <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xxl-4 g-2" id="docks-container">
@@ -30,7 +30,9 @@ checkAuth();
                     <div class="card h-100 shadow-sm border-<?= getStatusColor($dock['status']) ?>">
                         <div class="card-header py-2 bg-<?= getStatusColor($dock['status']) ?> text-white">
                             <div class="d-flex justify-content-between">
-                                <div class="fw-bold">Dock #<?= $dock['id'] ?></div>
+                                <div class="fw-bold">
+                                    <?= !empty($dock['name']) ? htmlspecialchars($dock['name']) : 'Dock #' . $dock['id'] ?>
+                                </div>
                                 <small><?= strtoupper($dock['type']) ?></small>
                             </div>
                         </div>
@@ -58,23 +60,34 @@ checkAuth();
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Editar Dock #<span id="modalDockId"></span></h5>
+                    <h5 class="modal-title">Editar <?= !empty($dock['name']) ? htmlspecialchars($dock['name']) : 'Dock #' . $dock['id'] ?></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <form id="editForm">
+                        <?php if (getUserRole() === 'admin'): ?>
+                        <div class="mb-3">
+                            <label class="form-label">Nombre del Dock</label>
+                            <input type="text" class="form-control" id="editDockName">
+                        </div>
+                        <?php endif; ?>
+                        
                         <div class="mb-3">
                             <label class="form-label">Cliente</label>
                             <input type="text" class="form-control" id="editClientName">
                         </div>
+                        
                         <div class="mb-3">
                             <label class="form-label">Estado</label>
                             <select class="form-select" id="editStatus">
                                 <option value="disponible">Disponible</option>
                                 <option value="ocupado">Ocupado</option>
+                                <?php if (getUserRole() === 'admin'): ?>
                                 <option value="cerrado">Cerrado</option>
+                                <?php endif; ?>
                             </select>
                         </div>
+                        
                         <div class="mb-3">
                             <label class="form-label">Detalles</label>
                             <textarea class="form-control" id="editDetails" rows="3"></textarea>

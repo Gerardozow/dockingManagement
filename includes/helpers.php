@@ -21,4 +21,15 @@ function getStatusColor($status) {
     default: return 'light';
   }
 }
+
+function getUserRole() {
+  return $_SESSION['role'] ?? null;
+}
+
+function checkAdmin() {
+  if ($_SESSION['role'] !== 'admin') {
+    header('HTTP/1.1 403 Forbidden');
+    die('Acceso no autorizado');
+  }
+}
 ?>

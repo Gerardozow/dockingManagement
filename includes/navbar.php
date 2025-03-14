@@ -9,9 +9,14 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <div class="navbar-nav ms-auto">
+                <?php if (getUserRole() === 'admin'): ?>
+                <span class="nav-item me-3 text-warning">
+                    <i class="bi bi-shield-lock"></i> Admin
+                </span>
+                <?php endif; ?>
                 <a class="nav-link" href="logout.php">
                     <i class="bi bi-box-arrow-right"></i>
-                    <span class="d-lg-none">Cerrar Sesión</span>
+                    <span class="d-lg-none">Salir</span>
                 </a>
             </div>
         </div>
