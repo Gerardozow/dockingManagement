@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function fetchDocksData() {
-  fetch("get_docks.php")
+  fetch("../api/get_docks.php")
     .then((response) => response.json())
     .then((data) => updateDockingStatus(data))
     .catch((error) => console.error("Error al obtener los datos:", error));
