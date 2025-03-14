@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
   let currentDockId = null;
-  const userRole = "<?= getUserRole() ?>"; // PHP a JS
+  const userRole = "<?= getUserRole() ?>";
 
   function updateDocks() {
     fetch("api/get_docks.php")
@@ -19,11 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
                           )} text-white">
                               <div class="d-flex justify-content-between">
                                   <div class="fw-bold">
-                                      ${
-                                        dock.name
-                                          ? dock.name
-                                          : "Dock #" + dock.id
-                                      }
+                                      ${dock.name}
                                   </div>
                                   <small>${dock.type.toUpperCase()}</small>
                               </div>
@@ -66,7 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .then((res) => res.json())
       .then((dock) => {
         if (userRole === "admin") {
-          document.getElementById("editDockName").value = dock.name || "";
+          document.getElementById("editDockName").value = dock.name;
         }
         document.getElementById("editClientName").value =
           dock.client_name || "";
@@ -77,6 +73,14 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   document.getElementById("saveChanges").addEventListener("click", () => {
+    if (
+      userRole === "admin" &&
+      !document.getElementById("editDockName").value
+    ) {
+      showToast("El nombre del dock es requerido", "warning");
+      return;
+    }
+
     const data = {
       client_name: document.getElementById("editClientName").value,
       status: document.getElementById("editStatus").value,
@@ -102,5 +106,5 @@ document.addEventListener("DOMContentLoaded", () => {
       .catch(() => showToast("Error al guardar", "danger"));
   });
 
-  // Resto del código igual...
+  // Resto del código...
 });

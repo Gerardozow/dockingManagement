@@ -4,19 +4,31 @@ require_once '../includes/auth.php';
 require_once '../includes/helpers.php';
 
 checkAuth();
+$userRole = $_SESSION['role'];
 
 $data = json_decode(file_get_contents('php://input'), true);
 $dockId = $_GET['id'];
-$userRole = $_SESSION['role'];
 
-// Validación de permisos
-if ($userRole !== 'admin') {
+// Validaciones para admin
+if ($userRole === 'admin') {
+    if (empty($data['name'])) {
+        http_response_code(400);
+        echo json_encode(['error' => 'El nombre del dock es obligatorio']);
+        exit();
+    }
+    
+    if (strlen($data['name']) > 100) {
+        http_response_code(400);
+        echo json_encode(['error' => 'El nombre no puede exceder 100 caracteres']);
+        exit();
+    }
+} else {
+    unset($data['name']);
     if ($data['status'] === 'cerrado') {
         http_response_code(403);
         echo json_encode(['error' => 'Solo administradores pueden cerrar docks']);
         exit();
     }
-    unset($data['name']);
 }
 
 // Actualización condicional de tiempos

@@ -31,7 +31,7 @@ checkAuth();
                         <div class="card-header py-2 bg-<?= getStatusColor($dock['status']) ?> text-white">
                             <div class="d-flex justify-content-between">
                                 <div class="fw-bold">
-                                    <?= !empty($dock['name']) ? htmlspecialchars($dock['name']) : 'Dock #' . $dock['id'] ?>
+                                    <?= htmlspecialchars($dock['name']) ?>
                                 </div>
                                 <small><?= strtoupper($dock['type']) ?></small>
                             </div>
@@ -60,7 +60,7 @@ checkAuth();
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Editar <?= !empty($dock['name']) ? htmlspecialchars($dock['name']) : 'Dock #' . $dock['id'] ?></h5>
+                    <h5 class="modal-title">Editar <?= htmlspecialchars($dock['name']) ?></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
@@ -68,7 +68,7 @@ checkAuth();
                         <?php if (getUserRole() === 'admin'): ?>
                         <div class="mb-3">
                             <label class="form-label">Nombre del Dock</label>
-                            <input type="text" class="form-control" id="editDockName">
+                            <input type="text" class="form-control" id="editDockName" required>
                         </div>
                         <?php endif; ?>
                         
