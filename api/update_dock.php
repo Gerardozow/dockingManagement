@@ -35,10 +35,14 @@ try {
         throw new Exception('ID de dock inválido');
     }
 
-    // Validar datos requeridos
-    if (empty($data['client_name']) || empty($data['status']) || empty($data['details'])) {
-        throw new Exception('Datos incompletos');
+    // Validar datos requeridos (solo el estado es obligatorio)
+    if (empty($data['status'])) {
+        throw new Exception('El estado es obligatorio');
     }
+
+    // Asignar valores por defecto si están vacíos
+    $clientName = $data['client_name'] ?? '';
+    $details = $data['details'] ?? '';
 
     // Actualizar tiempos automáticamente
     $startTime = ($data['status'] === 'ocupado') ? 'NOW()' : 'start_time';
@@ -60,8 +64,8 @@ try {
 
     // Ejecutar consulta
     $stmt->bind_param('sssi',
-        $data['client_name'],
-        $data['details'],
+        $clientName, // Puede estar vacío
+        $details,    // Puede estar vacío
         $data['status'],
         $dockId
     );
