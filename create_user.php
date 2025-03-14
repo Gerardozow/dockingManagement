@@ -1,89 +1,71 @@
-<?php
-// create_user.php
-require_once 'includes/database.php';
-
-$error = '';
-$success = '';
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = trim($_POST['username']);
-    $password = trim($_POST['password']);
-    $role = $_POST['role'];
-
-    // Validaciones básicas
-    if (empty($username) || empty($password)) {
-        $error = 'Usuario y contraseña son requeridos!';
-    } else {
-        // Verificar si el usuario ya existe
-        $stmt = $conn->prepare("SELECT id FROM users WHERE username = ?");
-        $stmt->bind_param("s", $username);
-        $stmt->execute();
-        
-        if ($stmt->get_result()->num_rows > 0) {
-            $error = 'El usuario ya existe!';
-        } else {
-            // Crear usuario
-            $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
-            $stmt = $conn->prepare("INSERT INTO users (username, password, role) VALUES (?, ?, ?)");
-            $stmt->bind_param("sss", $username, $hashedPassword, $role);
-            
-            if ($stmt->execute()) {
-                $success = 'Usuario creado exitosamente!';
-            } else {
-                $error = 'Error al crear el usuario: ' . $conn->error;
-            }
-        }
-    }
-}
-?>
-
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Docks</title>
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <title>Crear Usuario</title>
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <!-- Estilos personalizados -->
+    <link rel="stylesheet" href="css/styles.css">
 </head>
-<body class="bg-light">
-    <div class="container mt-5" style="max-width: 500px;">
-        <div class="card shadow">
-            <div class="card-body">
-                <h2 class="text-center mb-4">Crear Usuario Temporal</h2>
-                
-                <?php if ($error): ?>
-                    <div class="alert alert-danger"><?= $error ?></div>
-                <?php endif; ?>
-                
-                <?php if ($success): ?>
-                    <div class="alert alert-success"><?= $success ?></div>
-                <?php endif; ?>
+<body>
 
-                <form method="POST">
-                    <div class="mb-3">
-                        <label class="form-label">Usuario</label>
-                        <input type="text" name="username" class="form-control" required>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Contraseña</label>
-                        <input type="password" name="password" class="form-control" required>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Rol</label>
-                        <select name="role" class="form-select">
-                            <option value="user">Usuario Normal</option>
-                            <option value="admin">Administrador</option>
-                        </select>
-                    </div>
-                    
-                    <button type="submit" class="btn btn-primary w-100">Crear Usuario</button>
-                </form>
-                
-                <div class="mt-3 text-center">
-                    <a href="index.php" class="text-decoration-none">Volver al Login</a>
+    <div class=".container-fluid px-3 mt-3">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h4 mb-0">Gestión de Docks</h1>
+        </div>
+        
+        <!-- Contenedor para los docks -->
+        <div id="docks-container"></div>
+    </div>
+
+    <!-- Modal de Edición -->
+    <div class="modal fade" id="editModal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Editar Dock</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editForm">
+                        <div class="mb-3">
+                            <label class="form-label">Nombre del Dock</label>
+                            <input type="text" class="form-control" id="editDockName" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Cliente</label>
+                            <input type="text" class="form-control" id="editClientName">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Estado</label>
+                            <select class="form-select" id="editStatus">
+                                <option value="disponible">Disponible</option>
+                                <option value="ocupado">Ocupado</option>
+                                <option value="cerrado">Cerrado</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Detalles</label>
+                            <textarea class="form-control" id="editDetails" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="saveChanges">Guardar</button>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Bootstrap JS y dependencias -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Scripts personalizados -->
+    <script src="js/scripts.js"></script>
 </body>
 </html>
