@@ -90,7 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
         details: document.getElementById("editDetails").value.trim(),
       };
 
-      fetch(`api/update_dock.php?id=${currentDockId}`, {
+      fetch(`/docking/api/update_dock.php?id=${currentDockId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),

@@ -1,15 +1,23 @@
 <?php
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type");
+header('Content-Type: application/json');
+
 require_once '../includes/database.php';
 require_once '../includes/auth.php';
 require_once '../includes/helpers.php';
 
 checkAuth();
-header('Content-Type: application/json');
 
 try {
     $data = json_decode(file_get_contents('php://input'), true);
     $dockId = $_GET['id'];
-    
+
+    if (!is_numeric($dockId)) {
+        throw new Exception('ID de dock inválido');
+    }
+
     $query = "UPDATE docks SET
         client_name = ?,
         details = ?,
