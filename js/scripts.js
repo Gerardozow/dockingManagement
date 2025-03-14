@@ -9,6 +9,20 @@ document.addEventListener("DOMContentLoaded", () => {
   toastContainer.style.zIndex = "9999";
   document.body.appendChild(toastContainer);
 
+  // Función para formatear la hora en el horario de la Ciudad de México
+  function formatTime(dateString) {
+    if (!dateString) return "--:--";
+
+    const date = new Date(dateString);
+    const options = {
+      hour: "2-digit",
+      minute: "2-digit",
+      timeZone: "America/Mexico_City", // Zona horaria de la Ciudad de México
+    };
+
+    return new Intl.DateTimeFormat("es-MX", options).format(date);
+  }
+
   // Función para actualizar la lista de docks
   function updateDocks() {
     fetch("api/get_docks.php")

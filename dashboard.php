@@ -21,7 +21,7 @@ checkAuth();
 <body>
     <?php include 'includes/navbar.php'; ?>
     
-    <div class="container mt-3">
+    <div class=".container-fluid mt-3">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="h4 mb-0">Gestión de Docks</h1>
             <?php if (getUserRole() === 'admin'): ?>
