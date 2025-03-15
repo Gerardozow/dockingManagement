@@ -70,3 +70,8 @@ body {
     background-color: #6c757d;
     /* Gris */
 }
+
+
+span .nav-item {
+    margin: auto;
+}
