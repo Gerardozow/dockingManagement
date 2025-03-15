@@ -86,7 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div class="card-header">
                     <div class="d-flex justify-content-between align-items-center">
                         <div class="fw-bold">
-                            <i class="fas fa-truck"></i>
+                            <i class="bi bi-truck"></i>
                             ${dock.name}</div>
                         <small class="text-uppercase">${dock.type}</small>
                     </div>
