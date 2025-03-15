@@ -140,6 +140,16 @@ document.addEventListener("DOMContentLoaded", () => {
     setTimeout(() => toast.remove(), 3500);
   }
 
+  //Generar Modo oscuro
+  const darkModeToggle = document.getElementById("dark-mode-toggle");
+  darkModeToggle.addEventListener("click", () => {
+    document.body.classList.toggle("dark-mode");
+    localStorage.setItem(
+      "dark-mode",
+      document.body.classList.contains("dark-mode")
+    );
+  });
+
   // Inicialización
   updateDocks();
   setInterval(updateDocks, 3000); // Actualizar cada 3 segundos

@@ -8,7 +8,7 @@ require_once '../includes/database.php';
 require_once '../includes/helpers.php';
 require_once '../includes/auth.php';
 
-checkAuth();
+//checkAuth();
 
 try {
     // Consulta para obtener todos los docks agrupados por área
@@ -33,9 +33,7 @@ try {
     }
 
     echo json_encode($groupedDocks);
-
 } catch (Exception $e) {
     http_response_code(500);
     echo json_encode(['error' => $e->getMessage()]);
 }
-?>
