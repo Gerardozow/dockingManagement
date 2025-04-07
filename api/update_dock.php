@@ -36,12 +36,14 @@ try {
         throw new Exception('El estado es obligatorio');
     }
 
-    // Asignar valores por defecto si están vacíos
-    $clientName = $data['client_name'] ?? '';
-    $details = $data['details'] ?? '';
-
     // Obtener la hora actual en la zona horaria de México
     $currentTime = date('Y-m-d H:i:s'); // Formato compatible con MySQL
+
+    // Lógica para limpiar campos si el nuevo estado es "disponible"
+    $isDisponible = strtolower($data['status']) === 'disponible';
+
+    $clientName = $isDisponible ? '' : ($data['client_name'] ?? '');
+    $details = $isDisponible ? '' : ($data['details'] ?? '');
 
     // Actualizar tiempos automáticamente
     $startTime = ($data['status'] === 'ocupado') ? $currentTime : 'start_time';
@@ -63,8 +65,8 @@ try {
 
     // Ejecutar consulta
     $stmt->bind_param('sssssi',
-        $clientName, // Puede estar vacío
-        $details,    // Puede estar vacío
+        $clientName, // Vacío si está disponible
+        $details,    // Vacío si está disponible
         $data['status'],
         $startTime,
         $endTime,
