@@ -139,42 +139,57 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Evento para guardar cambios
   document.getElementById("saveChanges").addEventListener("click", () => {
-    try {
-      const data = {
-        client_name: document.getElementById("editClientName").value.trim(),
-        status: document.getElementById("editStatus").value,
-        details: document.getElementById("editDetails").value.trim(),
-      };
-
-      fetch(
-        `https://gerardozow.me/docking/api/update_dock.php?id=${currentDockId}`,
-        {
+    const status = document.getElementById("editStatus").value;
+    const clientName = document.getElementById("editClientName").value.trim();
+    const details = document.getElementById("editDetails").value.trim();
+  
+    const data = {
+      client_name: clientName,
+      status: status,
+      details: details,
+    };
+  
+    const isDisponible = status === "disponible";
+  
+    const confirmMessage = isDisponible
+      ? "Esto eliminará los datos del cliente y comentario. ¿Estás seguro?"
+      : "¿Estás seguro de que los datos son correctos?";
+  
+    Swal.fire({
+      title: "Confirmar acción",
+      text: confirmMessage,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Sí, continuar",
+      cancelButtonText: "Cancelar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        fetch(`https://gerardozow.me/docking/api/update_dock.php?id=${currentDockId}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data),
-        }
-      )
-        .then((response) => {
-          if (!response.ok)
-            throw new Error(`HTTP error! status: ${response.status}`);
-          return response.json();
         })
-        .then((result) => {
-          if (result.error) throw new Error(result.error);
-          showToast("¡Dock actualizado!", "success");
-          updateDocks();
-          bootstrap.Modal.getInstance(
-            document.getElementById("editModal")
-          ).hide();
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-          showToast(`Error: ${error.message}`, "danger");
-        });
-    } catch (error) {
-      showToast(error.message, "warning");
-    }
+          .then((response) => {
+            if (!response.ok)
+              throw new Error(`HTTP error! status: ${response.status}`);
+            return response.json();
+          })
+          .then((result) => {
+            if (result.error) throw new Error(result.error);
+            showToast("¡Dock actualizado!", "success");
+            updateDocks();
+            bootstrap.Modal.getInstance(
+              document.getElementById("editModal")
+            ).hide();
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            showToast(`Error: ${error.message}`, "danger");
+          });
+      }
+    });
   });
+  
 
   // Funciones auxiliares
   function getStatusColor(status) {
