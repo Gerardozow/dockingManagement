@@ -15,9 +15,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const date = new Date(dateString);
     const options = {
+      day: "2-digit",
+      month: "2-digit",
       hour: "2-digit",
       minute: "2-digit",
-      timeZone: "America/Mexico_City", // Zona horaria de la Ciudad de México
+      timeZone: "America/Mexico_City",
     };
 
     return new Intl.DateTimeFormat("es-MX", options).format(date);
@@ -101,6 +103,9 @@ document.addEventListener("DOMContentLoaded", () => {
                       <li><small>Inicio: ${formatTime(
                         dock.start_time
                       )}</small></li>
+                      <li><small>Fin: ${
+                        dock.end_time ? formatTime(dock.end_time) : "--:--"
+                      }</small></li>
                   </ul>
               </div>
               <div class="card-footer">
@@ -142,19 +147,19 @@ document.addEventListener("DOMContentLoaded", () => {
     const status = document.getElementById("editStatus").value;
     const clientName = document.getElementById("editClientName").value.trim();
     const details = document.getElementById("editDetails").value.trim();
-  
+
     const data = {
       client_name: clientName,
       status: status,
       details: details,
     };
-  
+
     const isDisponible = status === "disponible";
-  
+
     const confirmMessage = isDisponible
       ? "Esto eliminará los datos del cliente y comentario. ¿Estás seguro?"
       : "¿Estás seguro de que los datos son correctos?";
-  
+
     Swal.fire({
       title: "Confirmar acción",
       text: confirmMessage,
@@ -164,11 +169,14 @@ document.addEventListener("DOMContentLoaded", () => {
       cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
-        fetch(`https://gerardozow.me/docking/api/update_dock.php?id=${currentDockId}`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        })
+        fetch(
+          `https://gerardozow.me/docking/api/update_dock.php?id=${currentDockId}`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          }
+        )
           .then((response) => {
             if (!response.ok)
               throw new Error(`HTTP error! status: ${response.status}`);
@@ -189,7 +197,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   });
-  
 
   // Funciones auxiliares
   function getStatusColor(status) {
